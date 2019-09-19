@@ -6,5 +6,6 @@ provider "aws" {
 module "imputation-server" {
   source = "../.."
 
-
+  name_prefix = "csg-imputation"
+  public_key  = ""
 }
