@@ -39,3 +39,13 @@ module "imputation-db" {
 
   db_password = "Dontusethisinproduction!"
 }
+
+module "imputation-bastion" {
+  source = "../../modules/imputation-bastion"
+
+  name_prefix = "csg-imputation"
+  public_key  = ""
+
+  bastion_host_subnet_ids        = module.imputation-vpc.vpc_public_subnets
+  bastion_host_security_group_id = module.imputation-vpc.bastion_host_security_group_id
+}
