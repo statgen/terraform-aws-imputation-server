@@ -16,13 +16,12 @@ variable "vpc_id" {
 }
 
 variable "lb_security_group" {
-  #TODO: this should probably be made in this module, not the vpc one
   description = "security group for ELB"
   default     = null
   type        = string
 }
 
-variable "lb_subnet" {
+variable "lb_subnets" {
   description = "The subnet where the ELB will be deployed"
   default     = null
 }

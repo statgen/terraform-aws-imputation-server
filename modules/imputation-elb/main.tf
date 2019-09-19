@@ -31,7 +31,7 @@ resource "aws_lb" "imputation_lb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [var.lb_security_group]
-  subnets            = var.lb_subnet
+  subnets            = var.lb_subnets
 
   tags = {
     Terraform   = "true"

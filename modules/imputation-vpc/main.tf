@@ -43,12 +43,12 @@ module "vpc" {
 # Create security groups
 # ---------------------------------------------------------------------------------------------------------------------
 
-module "web_server_sg" {
+module "lb_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "3.1.0"
 
-  name        = "${var.name_prefix}-web-server"
-  description = "Security group for frontend web-server with HTTP(S) ports open"
+  name        = "${var.name_prefix}-lb"
+  description = "Security group for frontend load balancer with HTTP(S) ports open"
   vpc_id      = module.vpc.vpc_id
 
   ingress_with_cidr_blocks = [
@@ -161,20 +161,20 @@ module "emr_master_sg" {
   ingress_with_source_security_group_id = [
     {
       rule                     = "http-80-tcp"
-      source_security_group_id = module.web_server_sg.this_security_group_id
-      description              = "Inbound allow 80 TCP from web server"
+      source_security_group_id = module.lb_sg.this_security_group_id
+      description              = "Inbound allow 80 TCP from load balancer"
     },
     {
       from_port                = 8082
       to_port                  = 8082
       protocol                 = 6
-      source_security_group_id = module.web_server_sg.this_security_group_id
-      description              = "Inbound allow 8082 TCP from web server"
+      source_security_group_id = module.lb_sg.this_security_group_id
+      description              = "Inbound allow 8082 TCP from load balancer"
     },
     {
       rule                     = "https-443-tcp"
-      source_security_group_id = module.web_server_sg.this_security_group_id
-      description              = "Inbound allow 443 TCP from web server"
+      source_security_group_id = module.lb_sg.this_security_group_id
+      description              = "Inbound allow 443 TCP from load balancer"
     },
     {
       rule                     = "ssh-tcp"

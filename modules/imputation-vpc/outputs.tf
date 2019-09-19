@@ -23,8 +23,8 @@ output "vpc_private_subnets" {
   description = "List of ids of private subnets"
 }
 
-output "web_server_security_group_id" {
-  value       = module.web_server_sg.this_security_group_id
+output "lb_security_group" {
+  value       = module.lb_sg.this_security_group_id
   description = "The ID of the security group"
 }
 

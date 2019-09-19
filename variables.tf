@@ -10,9 +10,27 @@ variable "name_prefix" {
 }
 
 variable "public_key" {
-  description = "RSA public key for AWS key pair"
+  description = "RSA public key for AWS key pair used to access cluster"
   default     = null
   type        = string
+}
+
+variable "vpc_id" {
+  description = "The ID of the VPC in which the cluster is deployed"
+  default     = null
+  type        = string
+}
+
+variable "ec2_subnet" {
+  description = "The subnet to place EC2 instances in"
+  default = null
+  type = string
+}
+
+variable "master_security_group" {
+  description = "Additional security group needed for load balancer communication"
+  default = null
+  type = string
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

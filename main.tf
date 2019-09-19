@@ -6,6 +6,16 @@ terraform {
   required_version = ">= 0.12"
 }
 
+
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE AN AWS KEY PAIR FOR EMR MASTER NODE
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_key_pair" "emr_key_pair" {
+  key_name   = "${var.name_prefix}-emr"
+  public_key = var.public_key
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE IAM ROLES AND POLICIES TO SUPPORT EMR AUTOSCALING AND CONNECTIONS TO AWS SERVICES
 # ---------------------------------------------------------------------------------------------------------------------
@@ -85,15 +95,6 @@ resource "aws_iam_role_policy_attachment" "ec2_autoscaling" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# CREATE AN AWS KEY PAIR
-# ---------------------------------------------------------------------------------------------------------------------
-
-resource "aws_key_pair" "emr_key_pair" {
-  key_name   = "${var.name_prefix}-emr"
-  public_key = var.public_key
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
 # CREATE AN ELASTIC MAP REDUCE (EMR) CLUSTER
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -107,8 +108,8 @@ resource "aws_emr_cluster" "cluster" {
 
   ec2_attributes {
     key_name                          = aws_key_pair.emr_key_pair.key_name
-    subnet_id                         = module.imputation-vpc.vpc_private_subnets[0]
-    additional_master_security_groups = module.imputation-vpc.emr_master_security_group_id
+    subnet_id                         = var.ec2_subnet
+    additional_master_security_groups = var.master_security_group
     instance_profile                  = aws_iam_instance_profile.ec2.arn
   }
 
@@ -190,26 +191,3 @@ EOF
   autoscaling_role = aws_iam_role.ec2_autoscaling.arn
 }
 
-# ----------------------------------------------------------------------------------------------------------------------
-# CREATE A VPC AND SECURITY GROUPS FOR IMPUTATION SERVER
-# ----------------------------------------------------------------------------------------------------------------------
-
-module "imputation-vpc" {
-  source = "./modules/imputation-vpc"
-
-  name_prefix = var.name_prefix
-}
-
-# ----------------------------------------------------------------------------------------------------------------------
-# CREATE AN ELB TO FORWARD WEB TRAFFIC TO IMPUTATION APPLICATION
-# ----------------------------------------------------------------------------------------------------------------------
-
-module "imputation-elb" {
-  source = "./modules/imputation-elb"
-
-  name_prefix = var.name_prefix
-  vpc_id = module.imputation-vpc.vpc_id
-
-  lb_security_group = module.imputation-vpc.web_server_security_group_id
-  lb_subnet = module.imputation-vpc.vpc_public_subnets
-}
