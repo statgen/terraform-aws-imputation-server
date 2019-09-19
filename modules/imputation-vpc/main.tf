@@ -28,8 +28,8 @@ module "vpc" {
   enable_s3_endpoint = true
 
   enable_nat_gateway     = true
-  single_nat_gateway     = true
-  one_nat_gateway_per_az = false
+  single_nat_gateway     = false
+  one_nat_gateway_per_az = true
 
   create_database_subnet_group = false
 
