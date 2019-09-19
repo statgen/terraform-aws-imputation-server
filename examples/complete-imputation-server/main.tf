@@ -28,3 +28,14 @@ module "imputation-elb" {
   lb_security_group = module.imputation-vpc.lb_security_group
   lb_subnets        = module.imputation-vpc.vpc_public_subnets
 }
+
+module "imputation-db" {
+  source = "../../modules/imputation-db"
+
+  name_prefix = "csg-imputation"
+
+  database_subnet_ids        = module.imputation-vpc.vpc_database_subnets
+  database_security_group_id = module.imputation-vpc.database_security_group_id
+
+  db_password = "Dontusethisinproduction!"
+}
