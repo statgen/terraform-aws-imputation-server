@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1"
+  region = "us-east-2"
 }
 
 module "imputation-vpc" {
@@ -11,7 +11,7 @@ module "imputation-vpc" {
 module "imputation-server" {
   source = "./modules/imputation-server"
 
-  name_prefix = "csg-imputation"
+  name_prefix = var.name_prefix
   public_key  = var.emr_public_key
 
   vpc_id                = module.imputation-vpc.vpc_id
