@@ -124,6 +124,8 @@ resource "aws_emr_cluster" "cluster" {
   termination_protection            = var.termination_protection
   keep_job_flow_alive_when_no_steps = true
 
+  log_uri = var.log_uri
+
   ec2_attributes {
     key_name                          = aws_key_pair.emr_key_pair.key_name
     subnet_id                         = var.ec2_subnet

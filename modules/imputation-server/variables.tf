@@ -50,6 +50,12 @@ variable "emr_release_label" {
   type        = string
 }
 
+variable "log_uri" {
+  description = "S3 bucket to write the log files of the job flow logs. If not provided logs are not created"
+  default     = null
+  type        = string
+}
+
 variable "termination_protection" {
   default = false
   type    = bool
