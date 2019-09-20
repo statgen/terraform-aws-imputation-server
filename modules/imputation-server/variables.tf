@@ -23,14 +23,14 @@ variable "vpc_id" {
 
 variable "ec2_subnet" {
   description = "The subnet to place EC2 instances in"
-  default = null
-  type = string
+  default     = null
+  type        = string
 }
 
 variable "master_security_group" {
   description = "Additional security group needed for load balancer communication"
-  default = null
-  type = string
+  default     = null
+  type        = string
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

@@ -27,6 +27,8 @@ module "imputation-elb" {
 
   lb_security_group = module.imputation-vpc.lb_security_group
   lb_subnets        = module.imputation-vpc.vpc_public_subnets
+
+  master_node_id = module.imputation-server.master_node_id
 }
 
 module "imputation-db" {
@@ -38,6 +40,9 @@ module "imputation-db" {
   database_security_group_id = module.imputation-vpc.database_security_group_id
 
   db_password = var.database_password
+
+  # Temp value for testing
+  backup_retention_period = 0
 }
 
 module "imputation-bastion" {

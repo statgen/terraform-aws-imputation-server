@@ -18,6 +18,6 @@ variable "bastion_public_key" {
 
 variable "database_password" {
   description = "Password for imputation database"
-  default     = "Dontusethisinproduction!"
+  default     = ""
   type        = string
 }

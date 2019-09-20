@@ -26,6 +26,12 @@ variable "lb_subnets" {
   default     = null
 }
 
+variable "master_node_id" {
+  description = "EMR master node ID"
+  default     = null
+  type        = string
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.

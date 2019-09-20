@@ -16,6 +16,24 @@ resource "aws_key_pair" "emr_key_pair" {
   public_key = var.public_key
 }
 
+# ----------------------------------------------------------------------------------------------------------------------
+# FIND EMR MASTER NODE ID
+# ----------------------------------------------------------------------------------------------------------------------
+
+data "aws_instance" "master_node" {
+  depends_on = [aws_emr_cluster.cluster]
+
+  # Get EMR master instance
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc_id]
+  }
+  filter {
+    name   = "tag:aws:elasticmapreduce:instance-group-role"
+    values = ["MASTER"]
+  }
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE IAM ROLES AND POLICIES TO SUPPORT EMR AUTOSCALING AND CONNECTIONS TO AWS SERVICES
 # ---------------------------------------------------------------------------------------------------------------------
@@ -99,7 +117,7 @@ resource "aws_iam_role_policy_attachment" "ec2_autoscaling" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_emr_cluster" "cluster" {
-  name          = "${var.name_prefix}-emr-cluster"
+  name          = "${var.name_prefix}-cluster"
   release_label = var.emr_release_label
   applications  = ["Hadoop", "Ganglia"]
 

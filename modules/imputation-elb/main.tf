@@ -6,22 +6,6 @@ terraform {
   required_version = ">= 0.12"
 }
 
-# ----------------------------------------------------------------------------------------------------------------------
-# FIND EMR MASTER NODE ID
-# ----------------------------------------------------------------------------------------------------------------------
-
-data "aws_instance" "master_node" {
-  # Get EMR master instance
-  filter {
-    name   = "vpc-id"
-    values = [var.vpc_id]
-  }
-  filter {
-    name   = "tag:aws:elasticmapreduce:instance-group-role"
-    values = ["MASTER"]
-  }
-}
-
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE AN APPLICATION LOAD BALANCER
 # ---------------------------------------------------------------------------------------------------------------------
@@ -53,7 +37,7 @@ resource "aws_lb_target_group" "imputation_lb_tg" {
 
 resource "aws_lb_target_group_attachment" "imputation_lb_target" {
   target_group_arn = aws_lb_target_group.imputation_lb_tg.arn
-  target_id        = data.aws_instance.master_node.id
+  target_id        = var.master_node_id
   port             = var.port
 }
 
