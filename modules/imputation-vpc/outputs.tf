@@ -42,3 +42,8 @@ output "emr_master_security_group_id" {
   value       = module.emr_master_sg.this_security_group_id
   description = "The ID of the security group"
 }
+
+output "default_security_group_id" {
+  value = module.vpc.default_security_group_id
+  description = "The ID of the default security group"
+}

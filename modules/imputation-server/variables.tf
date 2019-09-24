@@ -67,14 +67,52 @@ variable "master_instance_type" {
   type        = string
 }
 
+variable "master_instance_ebs_size" {
+  description = "Size for EBS disk on master instance in GB"
+  default     = "2048"
+  type        = string
+}
+
 variable "core_instance_type" {
-  description = "Core instance type for EMR master node"
-  default     = "r5.24xlarge"
+  description = "Core instance type for EMR"
+  default     = "r5.xlarge"
   type        = string
 }
 
 variable "core_instance_ebs_size" {
   description = "Size for EBS disk on core instances in GB"
+  default     = "2048"
+  type        = string
+}
+
+variable "core_instance_count_min" {
+  description = "Min capacity for core instance ASG"
+  default     = 3
+}
+
+variable "core_instance_count_max" {
+  description = "Max capacity for core instance ASG"
+  default     = 6
+}
+
+variable "task_instance_count_min" {
+  description = "Min capacity for task instance ASG"
+  default     = 3
+}
+
+variable "task_instance_count_max" {
+  description = "Max capacity for task instance ASG"
+  default     = 15
+}
+
+variable "task_instance_type" {
+  description = "Task instance type for EMR"
+  default     = "r5.24xlarge"
+  type        = string
+}
+
+variable "task_instance_ebs_size" {
+  description = "Size for EBS disk on task instances in GB"
   default     = "2048"
   type        = string
 }

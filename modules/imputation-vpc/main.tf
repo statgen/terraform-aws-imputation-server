@@ -43,7 +43,7 @@ module "vpc" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# Create security groups
+# CREATE SECURITY GROUPS
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "lb_sg" {
@@ -162,11 +162,11 @@ module "emr_master_sg" {
   vpc_id      = module.vpc.vpc_id
 
   ingress_with_source_security_group_id = [
-    {
-      rule                     = "http-80-tcp"
-      source_security_group_id = module.lb_sg.this_security_group_id
-      description              = "Inbound allow 80 TCP from load balancer"
-    },
+    # {
+    #   rule                     = "http-80-tcp"
+    #   source_security_group_id = module.lb_sg.this_security_group_id
+    #   description              = "Inbound allow 80 TCP from load balancer"
+    # },
     {
       from_port                = 8082
       to_port                  = 8082
@@ -174,11 +174,11 @@ module "emr_master_sg" {
       source_security_group_id = module.lb_sg.this_security_group_id
       description              = "Inbound allow 8082 TCP from load balancer"
     },
-    {
-      rule                     = "https-443-tcp"
-      source_security_group_id = module.lb_sg.this_security_group_id
-      description              = "Inbound allow 443 TCP from load balancer"
-    },
+    # {
+    #   rule                     = "https-443-tcp"
+    #   source_security_group_id = module.lb_sg.this_security_group_id
+    #   description              = "Inbound allow 443 TCP from load balancer"
+    # },
     {
       rule                     = "ssh-tcp"
       source_security_group_id = module.bastion_host_sg.this_security_group_id

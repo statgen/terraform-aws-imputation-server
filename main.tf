@@ -14,6 +14,12 @@ module "imputation-server" {
   name_prefix = var.name_prefix
   public_key  = var.emr_public_key
 
+  log_uri = "s3://aws-logs-536148068215-us-east-2/elasticmapreduce/"
+
+  master_instance_type = "m5.xlarge"
+  core_instance_type   = "m5.xlarge"
+  task_instance_type   = "m5.xlarge"
+
   vpc_id                = module.imputation-vpc.vpc_id
   ec2_subnet            = module.imputation-vpc.vpc_private_subnets[0]
   master_security_group = module.imputation-vpc.emr_master_security_group_id
@@ -31,19 +37,19 @@ module "imputation-elb" {
   master_node_id = module.imputation-server.master_node_id
 }
 
-module "imputation-db" {
-  source = "./modules/imputation-db"
+# module "imputation-db" {
+#   source = "./modules/imputation-db"
 
-  name_prefix = var.name_prefix
+#   name_prefix = var.name_prefix
 
-  database_subnet_ids        = module.imputation-vpc.vpc_database_subnets
-  database_security_group_id = module.imputation-vpc.database_security_group_id
+#   database_subnet_ids        = module.imputation-vpc.vpc_database_subnets
+#   database_security_group_id = module.imputation-vpc.database_security_group_id
 
-  db_password = var.database_password
+#   db_password = var.database_password
 
-  # Temp value for testing
-  backup_retention_period = 0
-}
+#   # Temp value for testing
+#   backup_retention_period = 0
+# }
 
 module "imputation-bastion" {
   source = "./modules/imputation-bastion"

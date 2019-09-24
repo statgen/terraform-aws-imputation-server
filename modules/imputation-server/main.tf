@@ -7,15 +7,6 @@ terraform {
 }
 
 
-# ---------------------------------------------------------------------------------------------------------------------
-# CREATE AN AWS KEY PAIR FOR EMR MASTER NODE
-# ---------------------------------------------------------------------------------------------------------------------
-
-resource "aws_key_pair" "emr_key_pair" {
-  key_name   = "${var.name_prefix}-emr"
-  public_key = var.public_key
-}
-
 # ----------------------------------------------------------------------------------------------------------------------
 # FIND EMR MASTER NODE ID
 # ----------------------------------------------------------------------------------------------------------------------
@@ -32,6 +23,74 @@ data "aws_instance" "master_node" {
     name   = "tag:aws:elasticmapreduce:instance-group-role"
     values = ["MASTER"]
   }
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE AN AWS KEY PAIR FOR EMR MASTER NODE
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_key_pair" "emr_key_pair" {
+  key_name   = "${var.name_prefix}-emr"
+  public_key = var.public_key
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE AN AWS KMS KEY FOR EMR DISK ENCRYPTION
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_kms_key" "emr_kms" {
+  description             = "AWS KMS key for EMR data encryption"
+  deletion_window_in_days = 30
+  is_enabled              = true
+  enable_key_rotation     = true
+}
+
+resource "aws_kms_alias" "emr_kms" {
+  name          = "alias/${var.name_prefix}-key-alias"
+  target_key_id = aws_kms_key.emr_kms.arn
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# GRANT EMR SERVICE ROLES PERMISSION TO USE KMS KEY
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_kms_grant" "ec2-kms-grant" {
+  key_id            = aws_kms_key.emr_kms.arn
+  grantee_principal = aws_iam_role.ec2.arn
+  operations        = ["Encrypt", "Decrypt", "GenerateDataKey", "GenerateDataKeyWithoutPlaintext"]
+}
+
+resource "aws_kms_grant" "emr-kms-grant" {
+  key_id            = aws_kms_key.emr_kms.arn
+  grantee_principal = aws_iam_role.emr.arn
+  operations        = ["Encrypt", "Decrypt", "GenerateDataKey", "GenerateDataKeyWithoutPlaintext", "CreateGrant", "RetireGrant"]
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE EMR SECURITY CONFIGURATION
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_emr_security_configuration" "emr_sec_config" {
+  name_prefix = "${var.name_prefix}-"
+
+  configuration = <<EOF
+{
+    "EncryptionConfiguration": {
+        "AtRestEncryptionConfiguration": {
+            "S3EncryptionConfiguration": {
+                "EncryptionMode": "SSE-S3"
+            },
+            "LocalDiskEncryptionConfiguration": {
+                "EncryptionKeyProviderType": "AwsKms",
+                "AwsKmsKey": "${aws_kms_key.emr_kms.arn}",
+                "EnableEbsEncryption": true
+            }
+        },
+        "EnableInTransitEncryption": false,
+        "EnableAtRestEncryption": true
+    }
+}
+EOF
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -126,20 +185,28 @@ resource "aws_emr_cluster" "cluster" {
 
   log_uri = var.log_uri
 
+  security_configuration = aws_emr_security_configuration.emr_sec_config.name
+
   ec2_attributes {
     key_name                          = aws_key_pair.emr_key_pair.key_name
     subnet_id                         = var.ec2_subnet
     additional_master_security_groups = var.master_security_group
-    instance_profile                  = aws_iam_instance_profile.ec2.arn
+    instance_profile                  = aws_iam_instance_profile.ec2.name
   }
 
   master_instance_group {
     instance_type = var.master_instance_type
+
+    ebs_config {
+      size                 = var.master_instance_ebs_size
+      type                 = "gp2"
+      volumes_per_instance = 1
+    }
   }
 
   core_instance_group {
     instance_type  = var.core_instance_type
-    instance_count = 2
+    instance_count = 3
 
     ebs_config {
       size                 = var.core_instance_ebs_size
@@ -147,13 +214,12 @@ resource "aws_emr_cluster" "cluster" {
       volumes_per_instance = 1
     }
 
-    bid_price = var.bid_price
 
     autoscaling_policy = <<EOF
 {
 "Constraints": {
-  "MinCapacity": 2,
-  "MaxCapacity": 6
+  "MinCapacity": ${var.core_instance_count_min},
+  "MaxCapacity": ${var.core_instance_count_max}
 },
 "Rules": [
   {
@@ -207,7 +273,57 @@ EOF
 }]
 EOF
 
-  service_role     = aws_iam_role.emr.arn
-  autoscaling_role = aws_iam_role.ec2_autoscaling.arn
+  service_role     = aws_iam_role.emr.name
+  autoscaling_role = aws_iam_role.ec2_autoscaling.name
 }
 
+resource "aws_emr_instance_group" "task" {
+  name           = "${var.name_prefix}-instance-group"
+  cluster_id     = aws_emr_cluster.cluster.id
+  instance_count = 2
+  instance_type  = var.task_instance_type
+
+  bid_price = var.bid_price
+
+  ebs_optimized = true
+
+  ebs_config {
+    size                 = var.task_instance_ebs_size
+    type                 = "gp2"
+    volumes_per_instance = 1
+  }
+
+  autoscaling_policy = <<EOF
+{
+"Constraints": {
+  "MinCapacity": ${var.task_instance_count_min},
+  "MaxCapacity": ${var.task_instance_count_max}
+},
+"Rules": [
+  {
+    "Name": "ScaleOutMemoryPercentage",
+    "Description": "Scale out if YARNMemoryAvailablePercentage is less than 15",
+    "Action": {
+      "SimpleScalingPolicyConfiguration": {
+        "AdjustmentType": "CHANGE_IN_CAPACITY",
+        "ScalingAdjustment": 1,
+        "CoolDown": 300
+      }
+    },
+    "Trigger": {
+      "CloudWatchAlarmDefinition": {
+        "ComparisonOperator": "LESS_THAN",
+        "EvaluationPeriods": 1,
+        "MetricName": "YARNMemoryAvailablePercentage",
+        "Namespace": "AWS/ElasticMapReduce",
+        "Period": 300,
+        "Statistic": "AVERAGE",
+        "Threshold": 15.0,
+        "Unit": "PERCENT"
+      }
+    }
+  }
+]
+}
+EOF
+}
