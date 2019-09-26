@@ -21,3 +21,7 @@ variable "database_password" {
   default     = ""
   type        = string
 }
+
+variable "ssh_ingress_cidr" {
+
+}
