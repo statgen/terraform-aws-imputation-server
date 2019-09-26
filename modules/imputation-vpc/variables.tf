@@ -9,7 +9,6 @@ variable "name_prefix" {
   type        = string
 }
 
-
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.

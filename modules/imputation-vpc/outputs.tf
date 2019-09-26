@@ -3,8 +3,8 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 output "vpc_azs" {
-  value       = module.vpc.azs
   description = "A list of availability zones specified as argument to this module"
+  value       = module.vpc.azs
 }
 
 output "database_network_acl_id" {
