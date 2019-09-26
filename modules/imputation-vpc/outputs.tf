@@ -77,11 +77,6 @@ output "private_subnet_arns" {
   value       = module.vpc.private_subnet_arns
 }
 
-output "private_subnet_group" {
-  description = "ID of private subnet group"
-  value       = module.vpc.private_subnet_group
-}
-
 output "private_subnets" {
   description = "List of ids of private subnets"
   value       = module.vpc.private_subnets
@@ -105,11 +100,6 @@ output "public_route_table_ids" {
 output "public_subnet_arns" {
   description = "List of ARNs of public subnets"
   value       = module.vpc.public_subnet_arns
-}
-
-output "public_subnet_group" {
-  description = "ID of public subnet group"
-  value       = module.vpc.public_subnet_group
 }
 
 output "public_subnets" {
