@@ -5,7 +5,7 @@ output "master_node_id" {
 
 output "key_pair_name" {
   description = "The EC2 Key Pair name for the EMR master node"
-  value       = aws_key_pair.emr_key_pair.keyname
+  value       = aws_key_pair.emr_key_pair.key_name
 }
 
 output "public_key" {
