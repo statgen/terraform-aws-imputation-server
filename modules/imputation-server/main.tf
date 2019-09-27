@@ -14,7 +14,7 @@ terraform {
 data "aws_instance" "master_node" {
   depends_on = [aws_emr_cluster.cluster]
 
-  # Get EMR master instance
+  # Get EMR master instance for export
   filter {
     name   = "vpc-id"
     values = [var.vpc_id]
@@ -54,13 +54,13 @@ resource "aws_kms_alias" "emr_kms" {
 # GRANT EMR SERVICE ROLES PERMISSION TO USE KMS KEY
 # ---------------------------------------------------------------------------------------------------------------------
 
-resource "aws_kms_grant" "ec2-kms-grant" {
+resource "aws_kms_grant" "ec2_kms_grant" {
   key_id            = aws_kms_key.emr_kms.arn
   grantee_principal = aws_iam_role.ec2.arn
   operations        = ["Encrypt", "Decrypt", "GenerateDataKey", "GenerateDataKeyWithoutPlaintext"]
 }
 
-resource "aws_kms_grant" "emr-kms-grant" {
+resource "aws_kms_grant" "emr_kms_grant" {
   key_id            = aws_kms_key.emr_kms.arn
   grantee_principal = aws_iam_role.emr.arn
   operations        = ["Encrypt", "Decrypt", "GenerateDataKey", "GenerateDataKeyWithoutPlaintext", "CreateGrant", "RetireGrant"]
