@@ -68,6 +68,8 @@ module "bastion_host" {
 
   subnet_ids = var.bastion_host_subnet_ids
 
+  iam_instance_profile = var.iam_instance_profile
+
   root_block_device = [
     {
       volume_type = "gp2"

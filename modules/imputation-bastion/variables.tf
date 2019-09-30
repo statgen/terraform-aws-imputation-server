@@ -49,3 +49,9 @@ variable "environment" {
   default     = "dev"
   type        = string
 }
+
+variable "iam_instance_profile" {
+  description = "The IAM instance profile to attach to the bastion host"
+  default     = null
+  type        = sting
+}
