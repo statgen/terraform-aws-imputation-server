@@ -60,7 +60,7 @@ module "bastion_host" {
   instance_count = 1
 
   name          = "${var.name_prefix}-bastion-host"
-  ami           = aws_ami.ubuntu-bionic.id
+  ami           = data.aws_ami.ubuntu-bionic.id
   instance_type = var.instance_type
   key_name      = aws_key_pair.bastion_key_pair.key_name
 
