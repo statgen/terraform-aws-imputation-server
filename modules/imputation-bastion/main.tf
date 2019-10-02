@@ -30,17 +30,17 @@ resource "aws_eip" "this" {
   }
 }
 
-resource "aws_ami_copy" "ubuntu-bionic-encrypted-ami" {
-  name              = "bastion-host-ubuntu-bionic-encrypted-ami"
-  description       = "An encrypted root ami based off ${data.aws_ami.ubuntu-bionic.id}"
-  source_ami_id     = data.aws_ami.ubuntu-bionic.id
-  source_ami_region = "us-east-2"
-  encrypted         = true
+# resource "aws_ami_copy" "ubuntu-bionic-encrypted-ami" {
+#   name              = "bastion-host-ubuntu-bionic-encrypted-ami"
+#   description       = "An encrypted root ami based off ${data.aws_ami.ubuntu-bionic.id}"
+#   source_ami_id     = data.aws_ami.ubuntu-bionic.id
+#   source_ami_region = "us-east-2"
+#   encrypted         = true
 
-  tags = {
-    Name = "bastion-host-ubuntu-bionic-encrypted-ami"
-  }
-}
+#   tags = {
+#     Name = "bastion-host-ubuntu-bionic-encrypted-ami"
+#   }
+# }
 
 data "aws_ami" "ubuntu-bionic" {
   most_recent = true
@@ -60,7 +60,7 @@ module "bastion_host" {
   instance_count = 1
 
   name          = "${var.name_prefix}-bastion-host"
-  ami           = aws_ami_copy.ubuntu-bionic-encrypted-ami.id
+  ami           = aws_ami.ubuntu-bionic.id
   instance_type = var.instance_type
   key_name      = aws_key_pair.bastion_key_pair.key_name
 
