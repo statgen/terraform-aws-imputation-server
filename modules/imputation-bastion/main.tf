@@ -47,10 +47,10 @@ data "aws_ami" "ubuntu-bionic" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = ["csg/images/csg-bastion-*"]
   }
 
-  owners = ["099720109477"]
+  owners = ["536148068215"]
 }
 
 module "bastion_host" {
