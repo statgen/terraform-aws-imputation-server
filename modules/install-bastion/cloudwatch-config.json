@@ -18,6 +18,11 @@
 						"log_stream_name": "{instance_id}"
 					},
 					{
+						"file_path": "/var/log/fail2ban.log",
+						"log_group_name": "fail2ban.log",
+						"log_stream_name": "{instance_id}"
+					},
+					{
 						"file_path": "/var/log/kern.log",
 						"log_group_name": "kern.log",
 						"log_stream_name": "{instance_id}"
