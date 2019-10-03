@@ -11,7 +11,7 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_lb" "imputation_lb" {
-  name               = "imputation-frontend-lb"
+  name               = "${var.name_prefix}-lb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [var.lb_security_group]
@@ -24,7 +24,7 @@ resource "aws_lb" "imputation_lb" {
 }
 
 resource "aws_lb_target_group" "imputation_lb_tg" {
-  name     = "imputation-lb-tg"
+  name     = "${var.name_prefix}-tg"
   port     = var.port
   protocol = "HTTP"
   vpc_id   = var.vpc_id
