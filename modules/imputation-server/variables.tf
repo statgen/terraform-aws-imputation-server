@@ -41,7 +41,7 @@ variable "master_security_group" {
 variable "bootstrap_action" {
   description = "List of bootstrap actions that will be run before Hadoop is started on the cluster"
   default     = []
-  type        = list(object(name: string, path: string, args: list))
+  type        = list(object({name : string, path : string, args : list}))
 }
 
 variable "emr_release_label" {
