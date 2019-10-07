@@ -260,7 +260,15 @@ EOF
     Environment = var.environment
   }
 
-  bootstrap_action = var.bootstrap_action
+
+  dynamic "bootstrap_action" {
+    for_each = var.bootstrap_action
+    content {
+      name = bootstrap_action.value.name
+      path = bootstrap_action.value.path
+      args = bootstrap_action.value.args
+    }
+  }
 
   configurations_json = <<EOF
   [{
