@@ -42,6 +42,12 @@ variable "bootstrap_action" {
   description = "List of bootstrap actions that will be run before Hadoop is started on the cluster"
   default     = []
   type        = list(object({name : string, path : string, args : list(string)}))
+  # example:
+  # bootstrap_action = [{
+  #   name = "imputation-bootstrap"
+  #   path = "s3://imputationserver-aws/bootstrap.sh"
+  #   args = []
+  # },
 }
 
 variable "emr_release_label" {
