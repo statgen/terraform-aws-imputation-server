@@ -40,10 +40,10 @@ variable "master_security_group" {
 
 variable "bootstrap_action" {
   description = "List of bootstrap actions that will be run before Hadoop is started on the cluster"
-  default = [{
+  default = {
     name = "imputation-bootstrap"
     path = "s3://imputationserver-aws/bootstrap.sh"
-  }]
+  }
   type = list
 }
 

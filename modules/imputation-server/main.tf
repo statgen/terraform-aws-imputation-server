@@ -260,7 +260,7 @@ EOF
     Environment = var.environment
   }
 
-  bootstrap_action = var.bootstrap_action
+  bootstrap_action = [var.bootstrap_action]
 
   configurations_json = <<EOF
   [{
