@@ -156,6 +156,11 @@ resource "aws_iam_role_policy_attachment" "ec2" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceforEC2Role"
 }
 
+resource "aws_iam_role_policy_attachment" "cloudwatch" {
+  role       = aws_iam_role.ec2.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
 resource "aws_iam_instance_profile" "ec2" {
   name = aws_iam_role.ec2.name
   role = aws_iam_role.ec2.name
@@ -255,10 +260,7 @@ EOF
     Environment = var.environment
   }
 
-  bootstrap_action {
-    path = var.bootstrap_path
-    name = "imputation"
-  }
+  bootstrap_action = var.bootstrap_action
 
   configurations_json = <<EOF
   [{

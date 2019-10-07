@@ -38,10 +38,13 @@ variable "master_security_group" {
 # These parameters have reasonable defaults.
 # ---------------------------------------------------------------------------------------------------------------------
 
-variable "bootstrap_path" {
-  description = "Path to bootstrap script"
-  default     = "s3://imputationserver-aws/bootstrap.sh"
-  type        = string
+variable "bootstrap_action" {
+  description = "List of bootstrap actions that will be run before Hadoop is started on the cluster"
+  default = [{
+    name = "imputation-bootstrap"
+    path = "s3://imputationserver-aws/bootstrap.sh"
+  }]
+  type = list
 }
 
 variable "emr_release_label" {

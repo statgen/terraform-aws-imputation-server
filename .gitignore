@@ -3,3 +3,6 @@
 *.tfstate*
 terraform.tfstate
 terraform.tfvars
+
+## macOS files
+.DS_Store
