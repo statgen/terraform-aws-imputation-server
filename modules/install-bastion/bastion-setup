@@ -60,9 +60,12 @@ function retry {
 function install_dependencies {
   log_info "Installing dependencies"
 
-  sudo apt-get update
+  sudo apt-get update -y
   sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
-  sudo DEBIAN_FRONTEND=noninteractive apt-get --allow-unauthenticated install -y curl
+
+  retry \
+    "sudo DEBIAN_FRONTEND=noninteractive apt-get --allow-unauthenticated install -y chrony curl ec2-instance-connect fail2ban python3-pip ufw" \
+    "Installing dependencies"
 }
 
 function fetch_cloudwatch_pkg {
@@ -81,21 +84,63 @@ function fetch_cloudwatch_pkg {
 function install_cloudwatch_agent {
   log_info "Installing CloudWatch agent"
 
-  sudo dpkg -i -E $DOWNLOAD_CLOUDWATCH_PACKAGE_PATH
+  sudo dpkg -i -E "$DOWNLOAD_CLOUDWATCH_PACKAGE_PATH"
 
-  sudo mkdir -p $CLOUDWATCH_CONFIGURATION_PATH
+  sudo mkdir -p "$CLOUDWATCH_CONFIGURATION_PATH"
   sudo mv "/tmp/cloudwatch-config.json" "${CLOUDWATCH_CONFIGURATION_PATH}/${CLOUDWATCH_CONFIG_FILE}"
+}
+
+function configure_ufw {
+  log_info "Configuring UFW"
+
+  sudo ufw default deny incoming
+  sudo ufw default allow outgoing
+  sudo ufw allow ssh
+  sudo ufw --force enable
+}
+
+function configure_time {
+  log_info "Configuring Chrony"
+
+  # Set chrony to use Amazon Time Sync Service
+  sudo sed -i '1s/^/server 169.254.169.123 prefer iburst minpoll 4 maxpoll 4\n/' "/etc/chrony/chrony.conf"
+  sudo systemctl restart chrony
+}
+
+function configure_system_use_notification {
+  log_info "Configuring system use notification"
+
+  sudo bash -c 'echo "************************************************************************" > /etc/issue.net'
+  sudo bash -c 'echo "* By your use of these resources, you agree to abide by Proper Use of  *" >> /etc/issue.net'
+  sudo bash -c 'echo "* Information Resources, Information Technology, and Networks at the   *" >> /etc/issue.net'
+  sudo bash -c 'echo "* University of Michigan (SPG 601.07), in addition to all relevant     *" >> /etc/issue.net'
+  sudo bash -c 'echo "* state and federal laws.                                              *" >> /etc/issue.net'
+  sudo bash -c 'echo "* https://spg.umich.edu/policy/601.07                                  *" >> /etc/issue.net'
+  sudo bash -c 'echo "************************************************************************" >> /etc/issue.net'
+
+  sudo sed -i "s=#Banner none=Banner /etc/issue.net=g" "/etc/ssh/sshd_config"
+}
+
+function install_ec2_instance_connect_cli {
+  pip3 install ec2instanceconnectcli
 }
 
 function install {
   local version="latest"
   local download_url=""
 
+  log_info "Waiting for system to initialize"
+  sleep 30
+
   log_info "Starting setup"
 
   install_dependencies
+  configure_time
   fetch_cloudwatch_pkg "$version" "$download_url"
   install_cloudwatch_agent
+  configure_ufw
+  install_ec2_instance_connect_cli
+  configure_system_use_notification
 }
 
 install "$@"
