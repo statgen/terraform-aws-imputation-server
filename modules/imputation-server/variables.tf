@@ -47,7 +47,7 @@ variable "bootstrap_action" {
   #   name = "imputation-bootstrap"
   #   path = "s3://imputationserver-aws/bootstrap.sh"
   #   args = []
-  # },
+  # },]
 }
 
 variable "emr_release_label" {

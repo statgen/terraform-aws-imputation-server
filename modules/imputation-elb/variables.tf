@@ -32,6 +32,18 @@ variable "master_node_id" {
   type        = string
 }
 
+variable "project" {
+  description = "Value for project tag"
+  default     = null
+  type        = string
+}
+
+variable "certificate_arn" {
+  description = "The ARN of the default SSL server certificate"
+  default     = null
+  type        = string
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
@@ -46,5 +58,11 @@ variable "port" {
 variable "environment" {
   description = "Value for environment tag"
   default     = "dev"
+  type        = string
+}
+
+variable "ssl_policy" {
+  description = "The name of the SSL Policy for the listener"
+  default     = "ELBSecurityPolicy-2016-08"
   type        = string
 }
