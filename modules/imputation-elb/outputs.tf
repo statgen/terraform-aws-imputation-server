@@ -22,3 +22,8 @@ output "lb_name" {
   description = "The name of the load balancer"
   value       = aws_lb.imputation_lb.name
 }
+
+output "lb_zone_id" {
+  description = "The zone ID of the load balancer"
+  value       = aws_lb.imputation_lb.zone_id
+}
