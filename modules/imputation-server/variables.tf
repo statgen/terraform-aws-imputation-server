@@ -59,11 +59,13 @@ variable "bootstrap_action" {
 variable "core_instance_count_max" {
   description = "Max capacity for core instance ASG"
   default     = 6
+  type        = number
 }
 
 variable "core_instance_count_min" {
   description = "Min capacity for core instance ASG"
   default     = 3
+  type        = number
 }
 
 variable "core_instance_ebs_size" {
@@ -135,11 +137,13 @@ variable "module_tags" {
 variable "task_instance_count_max" {
   description = "Max capacity for task instance ASG"
   default     = 15
+  type        = number
 }
 
 variable "task_instance_count_min" {
   description = "Min capacity for task instance ASG"
   default     = 3
+  type        = number
 }
 
 variable "task_instance_ebs_size" {
