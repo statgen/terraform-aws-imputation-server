@@ -3,14 +3,8 @@
 # You must provide a value for each of these parameters.
 # ---------------------------------------------------------------------------------------------------------------------
 
-variable "name_prefix" {
-  description = "A name prefix used in resource names to ensure uniqueness across accounts"
-  default     = "imputation-example"
-  type        = string
-}
-
-variable "vpc_id" {
-  description = "The ID of the VPC in which the cluster is deployed"
+variable "certificate_arn" {
+  description = "The ARN of the default SSL server certificate"
   default     = null
   type        = string
 }
@@ -32,14 +26,14 @@ variable "master_node_id" {
   type        = string
 }
 
-variable "project" {
-  description = "Value for project tag"
-  default     = null
+variable "name_prefix" {
+  description = "A name prefix used in resource names to ensure uniqueness across accounts"
+  default     = "imputation-example"
   type        = string
 }
 
-variable "certificate_arn" {
-  description = "The ARN of the default SSL server certificate"
+variable "vpc_id" {
+  description = "The ID of the VPC in which the cluster is deployed"
   default     = null
   type        = string
 }
@@ -49,15 +43,27 @@ variable "certificate_arn" {
 # These parameters have reasonable defaults.
 # ---------------------------------------------------------------------------------------------------------------------
 
+variable "lb_tags" {
+  description = "Tags applied to AWS Application Load Balancer"
+  default     = {}
+  type        = map(string)
+}
+
+variable "lb_target_group_tags" {
+  description = "Tags applied to the Load Balancer target group"
+  default     = {}
+  type        = map(string)
+}
+
+variable "module_tags" {
+  description = "Tags applied to all supported resources in module"
+  default     = {}
+  type        = map(string)
+}
+
 variable "port" {
   description = "Port for load balancer to forward to"
   default     = "8082"
-  type        = string
-}
-
-variable "environment" {
-  description = "Value for environment tag"
-  default     = "dev"
   type        = string
 }
 

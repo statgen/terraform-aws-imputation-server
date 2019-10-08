@@ -17,10 +17,10 @@ resource "aws_lb" "imputation_lb" {
   security_groups    = [var.lb_security_group]
   subnets            = var.lb_subnets
 
-  tags = {
-    Terraform   = "true"
-    Environment = var.environment
-  }
+  tags = merge(
+    var.lb_tags,
+    var.module_tags,
+  )
 }
 
 resource "aws_lb_target_group" "imputation_lb_tg" {
@@ -33,6 +33,11 @@ resource "aws_lb_target_group" "imputation_lb_tg" {
     enabled = true
     path    = "/index.html"
   }
+
+  tags = merge(
+    var.lb_target_group_tags,
+    var.module_tags,
+  )
 }
 
 resource "aws_lb_target_group_attachment" "imputation_lb_target" {
