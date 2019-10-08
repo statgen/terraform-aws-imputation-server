@@ -33,6 +33,11 @@ resource "aws_kms_key" "emr_kms" {
   deletion_window_in_days = 30
   is_enabled              = true
   enable_key_rotation     = true
+
+  tags = merge(
+    var.aws_kms_key_tags,
+    var.module_tags,
+  )
 }
 
 resource "aws_kms_alias" "emr_kms" {
@@ -129,6 +134,11 @@ data "aws_iam_policy_document" "application_autoscaling" {
 resource "aws_iam_role" "emr" {
   name               = "${var.name_prefix}-emr-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_emr.json
+
+  tags = merge(
+    var.emr_iam_role_tags,
+    var.module_tags,
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "emr" {
@@ -139,6 +149,11 @@ resource "aws_iam_role_policy_attachment" "emr" {
 resource "aws_iam_role" "ec2" {
   name               = "${var.name_prefix}-ec2-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_ec2.json
+
+  tags = merge(
+    var.ec2_iam_role_tags,
+    var.module_tags,
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "ec2" {
@@ -159,6 +174,11 @@ resource "aws_iam_instance_profile" "ec2" {
 resource "aws_iam_role" "ec2_autoscaling" {
   name               = "${var.name_prefix}-ec2-autoscaling-role"
   assume_role_policy = data.aws_iam_policy_document.application_autoscaling.json
+
+  tags = merge(
+    var.ec2_autoscaling_role_tags,
+    var.module_tags,
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "ec2_autoscaling" {
@@ -244,11 +264,10 @@ resource "aws_emr_cluster" "cluster" {
 EOF
   }
 
-  tags = {
-    Terraform   = "true"
-    Environment = var.environment
-  }
-
+  tags = merge(
+    var.emr_cluster_tags,
+    var.module_tags,
+  )
 
   dynamic "bootstrap_action" {
     for_each = var.bootstrap_action

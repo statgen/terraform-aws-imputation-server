@@ -3,18 +3,6 @@
 # You must provide a value for each of these parameters.
 # ---------------------------------------------------------------------------------------------------------------------
 
-variable "name_prefix" {
-  description = "A name prefix used in resource names to ensure uniqueness across accounts"
-  default     = "imputation-example"
-  type        = string
-}
-
-variable "vpc_id" {
-  description = "The ID of the VPC in which the cluster is deployed"
-  default     = null
-  type        = string
-}
-
 variable "ec2_subnet" {
   description = "The subnet to place EC2 instances in"
   default     = null
@@ -27,6 +15,18 @@ variable "master_security_group" {
   type        = string
 }
 
+variable "name_prefix" {
+  description = "A name prefix used in resource names to ensure uniqueness across accounts"
+  default     = "imputation-example"
+  type        = string
+}
+
+variable "vpc_id" {
+  description = "The ID of the VPC in which the cluster is deployed"
+  default     = null
+  type        = string
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
@@ -35,7 +35,7 @@ variable "master_security_group" {
 variable "bootstrap_action" {
   description = "List of bootstrap actions that will be run before Hadoop is started on the cluster"
   default     = []
-  type        = list(object({name : string, path : string, args : list(string)}))
+  type        = list(object({ name : string, path : string, args : list(string) }))
   # example:
   # bootstrap_action = [{
   #   name = "imputation-bootstrap"
@@ -123,9 +123,38 @@ variable "bid_price" {
   type        = string
 }
 
-variable "environment" {
-  description = "Value for environment tag"
-  default     = "dev"
-  type        = string
+variable "aws_kms_key_tags" {
+  description = "Tags to be applied to the AWS KMS key"
+  default     = {}
+  type        = map(string)
 }
 
+variable "emr_iam_role_tags" {
+  description = "Tags to be applied to the IAM Role for the EMR cluster"
+  default     = {}
+  type        = map(string)
+}
+
+variable "ec2_iam_role_tags" {
+  description = "Tags to be applied to the IAM Role for the EC2 instances in the EMR cluster"
+  default     = {}
+  type        = map(string)
+}
+
+variable "ec2_autoscaling_role_tags" {
+  description = "Tags to be applied to the EC2 autoscaling role for the EMR cluster"
+  default     = {}
+  type        = map(string)
+}
+
+variable "emr_cluster_tags" {
+  description = "Tags to be applied to the EMR cluster"
+  default     = {}
+  type        = map(string)
+}
+
+variable "module_tags" {
+  description = "Tags applied to all supported resources in module"
+  default     = {}
+  type        = map(string)
+}
