@@ -6,7 +6,6 @@ terraform {
   required_version = ">= 0.12"
 }
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 # FIND EMR MASTER NODE ID
 # ----------------------------------------------------------------------------------------------------------------------
@@ -23,15 +22,6 @@ data "aws_instance" "master_node" {
     name   = "tag:aws:elasticmapreduce:instance-group-role"
     values = ["MASTER"]
   }
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# CREATE AN AWS KEY PAIR FOR EMR MASTER NODE
-# ---------------------------------------------------------------------------------------------------------------------
-
-resource "aws_key_pair" "emr_key_pair" {
-  key_name   = "${var.name_prefix}-emr"
-  public_key = var.public_key
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -193,7 +183,6 @@ resource "aws_emr_cluster" "cluster" {
   security_configuration = aws_emr_security_configuration.emr_sec_config.name
 
   ec2_attributes {
-    key_name                          = aws_key_pair.emr_key_pair.key_name
     subnet_id                         = var.ec2_subnet
     additional_master_security_groups = var.master_security_group
     instance_profile                  = aws_iam_instance_profile.ec2.name

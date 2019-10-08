@@ -9,12 +9,6 @@ variable "name_prefix" {
   type        = string
 }
 
-variable "public_key" {
-  description = "RSA public key for AWS key pair used to access cluster"
-  default     = null
-  type        = string
-}
-
 variable "vpc_id" {
   description = "The ID of the VPC in which the cluster is deployed"
   default     = null

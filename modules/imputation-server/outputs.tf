@@ -3,17 +3,6 @@ output "master_node_id" {
   value       = data.aws_instance.master_node.id
 }
 
-output "key_pair_name" {
-  description = "The EC2 Key Pair name for the EMR master node"
-  value       = aws_key_pair.emr_key_pair.key_name
-}
-
-output "public_key" {
-  description = "The public key for the EMR master node"
-  value       = aws_key_pair.emr_key_pair.public_key
-  sensitive   = true
-}
-
 output "kms_key_arn" {
   description = "The ARN of the KMS key used for EMR encryption"
   value       = aws_kms_key.emr_kms.arn
