@@ -32,6 +32,18 @@ variable "vpc_id" {
 # These parameters have reasonable defaults.
 # ---------------------------------------------------------------------------------------------------------------------
 
+variable "aws_kms_key_tags" {
+  description = "Tags to be applied to the AWS KMS key"
+  default     = {}
+  type        = map(string)
+}
+
+variable "bid_price" {
+  description = "Bid price for spot instances in EMR cluster. Default is higher than on-demand price to avoid interuptions"
+  default     = "10.00"
+  type        = string
+}
+
 variable "bootstrap_action" {
   description = "List of bootstrap actions that will be run before Hadoop is started on the cluster"
   default     = []
@@ -42,6 +54,52 @@ variable "bootstrap_action" {
   #   path = "s3://imputationserver-aws/bootstrap.sh"
   #   args = []
   # },]
+}
+
+variable "core_instance_count_max" {
+  description = "Max capacity for core instance ASG"
+  default     = 6
+}
+
+variable "core_instance_count_min" {
+  description = "Min capacity for core instance ASG"
+  default     = 3
+}
+
+variable "core_instance_ebs_size" {
+  description = "Size for EBS disk on core instances in GB"
+  default     = "2048"
+  type        = string
+}
+
+variable "core_instance_type" {
+  description = "Core instance type for EMR"
+  default     = "r5.xlarge"
+  type        = string
+}
+
+variable "ec2_autoscaling_role_tags" {
+  description = "Tags to be applied to the EC2 autoscaling role for the EMR cluster"
+  default     = {}
+  type        = map(string)
+}
+
+variable "ec2_iam_role_tags" {
+  description = "Tags to be applied to the IAM Role for the EC2 instances in the EMR cluster"
+  default     = {}
+  type        = map(string)
+}
+
+variable "emr_cluster_tags" {
+  description = "Tags to be applied to the EMR cluster"
+  default     = {}
+  type        = map(string)
+}
+
+variable "emr_iam_role_tags" {
+  description = "Tags to be applied to the IAM Role for the EMR cluster"
+  default     = {}
+  type        = map(string)
 }
 
 variable "emr_release_label" {
@@ -56,9 +114,10 @@ variable "log_uri" {
   type        = string
 }
 
-variable "termination_protection" {
-  default = false
-  type    = bool
+variable "master_instance_ebs_size" {
+  description = "Size for EBS disk on master instance in GB"
+  default     = "2048"
+  type        = string
 }
 
 variable "master_instance_type" {
@@ -67,37 +126,10 @@ variable "master_instance_type" {
   type        = string
 }
 
-variable "master_instance_ebs_size" {
-  description = "Size for EBS disk on master instance in GB"
-  default     = "2048"
-  type        = string
-}
-
-variable "core_instance_type" {
-  description = "Core instance type for EMR"
-  default     = "r5.xlarge"
-  type        = string
-}
-
-variable "core_instance_ebs_size" {
-  description = "Size for EBS disk on core instances in GB"
-  default     = "2048"
-  type        = string
-}
-
-variable "core_instance_count_min" {
-  description = "Min capacity for core instance ASG"
-  default     = 3
-}
-
-variable "core_instance_count_max" {
-  description = "Max capacity for core instance ASG"
-  default     = 6
-}
-
-variable "task_instance_count_min" {
-  description = "Min capacity for task instance ASG"
-  default     = 3
+variable "module_tags" {
+  description = "Tags applied to all supported resources in module"
+  default     = {}
+  type        = map(string)
 }
 
 variable "task_instance_count_max" {
@@ -105,10 +137,9 @@ variable "task_instance_count_max" {
   default     = 15
 }
 
-variable "task_instance_type" {
-  description = "Task instance type for EMR"
-  default     = "r5.24xlarge"
-  type        = string
+variable "task_instance_count_min" {
+  description = "Min capacity for task instance ASG"
+  default     = 3
 }
 
 variable "task_instance_ebs_size" {
@@ -117,44 +148,13 @@ variable "task_instance_ebs_size" {
   type        = string
 }
 
-variable "bid_price" {
-  description = "Bid price for spot instances in EMR cluster. Default is higher than on-demand price to avoid interuptions"
-  default     = "10.00"
+variable "task_instance_type" {
+  description = "Task instance type for EMR"
+  default     = "r5.24xlarge"
   type        = string
 }
 
-variable "aws_kms_key_tags" {
-  description = "Tags to be applied to the AWS KMS key"
-  default     = {}
-  type        = map(string)
-}
-
-variable "emr_iam_role_tags" {
-  description = "Tags to be applied to the IAM Role for the EMR cluster"
-  default     = {}
-  type        = map(string)
-}
-
-variable "ec2_iam_role_tags" {
-  description = "Tags to be applied to the IAM Role for the EC2 instances in the EMR cluster"
-  default     = {}
-  type        = map(string)
-}
-
-variable "ec2_autoscaling_role_tags" {
-  description = "Tags to be applied to the EC2 autoscaling role for the EMR cluster"
-  default     = {}
-  type        = map(string)
-}
-
-variable "emr_cluster_tags" {
-  description = "Tags to be applied to the EMR cluster"
-  default     = {}
-  type        = map(string)
-}
-
-variable "module_tags" {
-  description = "Tags applied to all supported resources in module"
-  default     = {}
-  type        = map(string)
+variable "termination_protection" {
+  default = false
+  type    = bool
 }
