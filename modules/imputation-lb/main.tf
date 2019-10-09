@@ -59,18 +59,18 @@ resource "aws_lb_listener" "imputation_https_fwd" {
   }
 }
 
-resource "aws_lb_listener" "imputation_http_redirect" {
-  load_balancer_arn = aws_lb.imputation_lb.arn
-  port              = "80"
-  protocol          = "HTTP"
+# resource "aws_lb_listener" "imputation_http_redirect" {
+#   load_balancer_arn = aws_lb.imputation_lb.arn
+#   port              = "80"
+#   protocol          = "HTTP"
 
-  default_action {
-    type = "redirect"
+#   default_action {
+#     type = "redirect"
 
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
+#     redirect {
+#       port        = "443"
+#       protocol    = "HTTPS"
+#       status_code = "HTTP_301"
+#     }
+#   }
+# }
