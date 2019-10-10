@@ -25,6 +25,15 @@ data "aws_instance" "master_node" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
+# CREATE AN EMPTY AWS KEY PAIR
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_key_pair" "emr_key_pair" {
+  key_name   = "${var.name_prefix}-emr"
+  public_key = ""
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
 # CREATE AN AWS KMS KEY FOR EMR DISK ENCRYPTION
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -203,7 +212,7 @@ resource "aws_emr_cluster" "cluster" {
   security_configuration = aws_emr_security_configuration.emr_sec_config.name
 
   ec2_attributes {
-    key_name                          = ""
+    key_name                          = aws_key_pair.emr_key_pair.key_name
     subnet_id                         = var.ec2_subnet
     additional_master_security_groups = var.master_security_group
     instance_profile                  = aws_iam_instance_profile.ec2.name
