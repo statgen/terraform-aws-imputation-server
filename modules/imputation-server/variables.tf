@@ -27,6 +27,12 @@ variable "vpc_id" {
   type        = string
 }
 
+variable "public_key" {
+  description = "RSA public key for AWS key pair used to access cluster"
+  default     = null
+  type        = string
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.

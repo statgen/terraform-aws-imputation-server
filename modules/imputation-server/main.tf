@@ -30,7 +30,7 @@ data "aws_instance" "master_node" {
 
 resource "aws_key_pair" "emr_key_pair" {
   key_name   = "${var.name_prefix}-emr"
-  public_key = ""
+  public_key = var.public_key
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
