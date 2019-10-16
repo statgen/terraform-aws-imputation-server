@@ -43,6 +43,12 @@ variable "vpc_id" {
 # These parameters have reasonable defaults.
 # ---------------------------------------------------------------------------------------------------------------------
 
+variable "enable_https" {
+  description = "If set to true, ALB will use HTTPS with provided certificate ARN"
+  default     = true
+  type        = bool
+}
+
 variable "lb_tags" {
   description = "Tags applied to AWS Application Load Balancer"
   default     = {}
@@ -51,12 +57,6 @@ variable "lb_tags" {
 
 variable "lb_target_group_tags" {
   description = "Tags applied to the Load Balancer target group"
-  default     = {}
-  type        = map(string)
-}
-
-variable "module_tags" {
-  description = "Tags applied to all supported resources in module"
   default     = {}
   type        = map(string)
 }
@@ -71,4 +71,10 @@ variable "ssl_policy" {
   description = "The name of the SSL Policy for the listener"
   default     = "ELBSecurityPolicy-2016-08"
   type        = string
+}
+
+variable "tags" {
+  description = "Tags applied to all supported resources in module"
+  default     = {}
+  type        = map(string)
 }

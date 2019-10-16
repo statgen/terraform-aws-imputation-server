@@ -1,11 +1,3 @@
-# ----------------------------------------------------------------------------------------------------------------------
-# REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
-# This module has been updated with 0.12 syntax, which means it is no longer compatible with any versions below 0.12.
-# ----------------------------------------------------------------------------------------------------------------------
-terraform {
-  required_version = ">= 0.12"
-}
-
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE AN APPLICATION LOAD BALANCER
 # ---------------------------------------------------------------------------------------------------------------------
@@ -19,7 +11,7 @@ resource "aws_lb" "imputation_lb" {
 
   tags = merge(
     var.lb_tags,
-    var.module_tags,
+    var.tags,
   )
 }
 
@@ -36,7 +28,7 @@ resource "aws_lb_target_group" "imputation_lb_tg" {
 
   tags = merge(
     var.lb_target_group_tags,
-    var.module_tags,
+    var.tags,
   )
 }
 
@@ -47,6 +39,7 @@ resource "aws_lb_target_group_attachment" "imputation_lb_target" {
 }
 
 resource "aws_lb_listener" "imputation_https_fwd" {
+  count             = var.enable_https ? 1 : 0
   load_balancer_arn = aws_lb.imputation_lb.arn
   port              = "443"
   protocol          = "HTTPS"
@@ -59,18 +52,14 @@ resource "aws_lb_listener" "imputation_https_fwd" {
   }
 }
 
-# resource "aws_lb_listener" "imputation_http_redirect" {
-#   load_balancer_arn = aws_lb.imputation_lb.arn
-#   port              = "80"
-#   protocol          = "HTTP"
+resource "aws_lb_listener" "imputation_http_fw" {
+  count             = var.enable_https ? 0 : 1
+  load_balancer_arn = aws_lb.imputation_lb.arn
+  port              = "80"
+  protocol          = "HTTP"
 
-#   default_action {
-#     type = "redirect"
-
-#     redirect {
-#       port        = "443"
-#       protocol    = "HTTPS"
-#       status_code = "HTTP_301"
-#     }
-#   }
-# }
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.imputation_lb_tg.arn
+  }
+}
