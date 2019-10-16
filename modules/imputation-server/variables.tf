@@ -9,8 +9,20 @@ variable "ec2_subnet" {
   type        = string
 }
 
-variable "master_security_group" {
+variable "emr_managed_master_security_group" {
   description = "Additional security group needed for load balancer communication"
+  default     = null
+  type        = string
+}
+
+variable "emr_managed_slave_security_group" {
+  description = "Additional security group needed for load balancer communication"
+  default     = null
+  type        = string
+}
+
+variable "service_access_security_group" {
+  description = "EC2 service access security group for EMR cluster in private subnet"
   default     = null
   type        = string
 }
@@ -134,7 +146,7 @@ variable "master_instance_type" {
   type        = string
 }
 
-variable "module_tags" {
+variable "tags" {
   description = "Tags applied to all supported resources in module"
   default     = {}
   type        = map(string)

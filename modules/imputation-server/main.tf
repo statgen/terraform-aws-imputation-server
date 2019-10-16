@@ -1,12 +1,4 @@
 # ----------------------------------------------------------------------------------------------------------------------
-# REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
-# This module has been updated with 0.12 syntax, which means it is no longer compatible with any versions below 0.12.
-# ----------------------------------------------------------------------------------------------------------------------
-terraform {
-  required_version = ">= 0.12"
-}
-
-# ----------------------------------------------------------------------------------------------------------------------
 # FIND EMR MASTER NODE ID
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -45,7 +37,7 @@ resource "aws_kms_key" "emr_kms" {
 
   tags = merge(
     var.aws_kms_key_tags,
-    var.module_tags,
+    var.tags,
   )
 }
 
@@ -146,7 +138,7 @@ resource "aws_iam_role" "emr" {
 
   tags = merge(
     var.emr_iam_role_tags,
-    var.module_tags,
+    var.tags,
   )
 }
 
@@ -161,7 +153,7 @@ resource "aws_iam_role" "ec2" {
 
   tags = merge(
     var.ec2_iam_role_tags,
-    var.module_tags,
+    var.tags,
   )
 }
 
@@ -186,7 +178,7 @@ resource "aws_iam_role" "ec2_autoscaling" {
 
   tags = merge(
     var.ec2_autoscaling_role_tags,
-    var.module_tags,
+    var.tags,
   )
 }
 
@@ -214,8 +206,11 @@ resource "aws_emr_cluster" "cluster" {
   ec2_attributes {
     key_name                          = aws_key_pair.emr_key_pair.key_name
     subnet_id                         = var.ec2_subnet
-    additional_master_security_groups = var.master_security_group
-    instance_profile                  = aws_iam_instance_profile.ec2.name
+    emr_managed_master_security_group = var.emr_managed_master_security_group
+    emr_managed_slave_security_group  = var.emr_managed_slave_security_group
+    service_access_security_group     = var.service_access_security_group
+
+    instance_profile = aws_iam_instance_profile.ec2.name
   }
 
   master_instance_group {
@@ -276,7 +271,7 @@ EOF
 
   tags = merge(
     var.emr_cluster_tags,
-    var.module_tags,
+    var.tags,
   )
 
   dynamic "bootstrap_action" {
@@ -308,7 +303,7 @@ EOF
 resource "aws_emr_instance_group" "task" {
   name           = "${var.name_prefix}-instance-group"
   cluster_id     = aws_emr_cluster.cluster.id
-  instance_count = 2
+  instance_count = var.task_instance_count_min
   instance_type  = var.task_instance_type
 
   bid_price = var.bid_price
