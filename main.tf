@@ -1,75 +1,147 @@
-provider "aws" {
-  region = "us-east-2"
+# ---------------------------------------------------------------------------------------------------------------------
+# DEPLOY AN IMPUTATION SERVER, A LOAD BALANCER, AND VPC IN AWS
+# This is an example of how to use the imputation-server and imputation-lb modules to deploy an imputation server
+# instance in AWS with an Application Load Balancer in front of it in a new VPC.
+#
+# !! WARNING !! This is only an example and should not be used for a production instance. Further hardening such as TLS,
+# security settings, private subnets, custom public key pairs, and managemnt infrastructure should be in place with this
+# deployment.
+# ---------------------------------------------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------------------------------------------------
+# REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
+# This module has been updated with 0.12 syntax, which means it is no longer compatible with any versions below 0.12.
+# ----------------------------------------------------------------------------------------------------------------------
+
+terraform {
+  required_version = ">= 0.12"
 }
 
-module "imputation-vpc" {
-  source = "./modules/imputation-vpc"
+data "aws_region" "current" {}
 
-  name_prefix      = var.name_prefix
-  ssh_ingress_cidr = var.ssh_ingress_cidr
+# ----------------------------------------------------------------------------------------------------------------------
+# CREATE EXAMPLE VPC
+# ----------------------------------------------------------------------------------------------------------------------
+
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "2.15.0"
+
+  name = "imputation-example-vpc"
+  cidr = "10.120.0.0/16"
+
+  azs            = ["${data.aws_region.current.name}a", "${data.aws_region.current.name}b"]
+  public_subnets = ["10.120.48.0/20", "10.120.64.0/20"]
+
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+
+  enable_s3_endpoint = true
+
+  tags = {
+    Terraform = "true"
+    Project   = "imputation-example"
+  }
 }
 
-resource "aws_s3_bucket" "log-bucket" {
-  bucket = "imputation-example-network-traffic-logs"
-  acl    = "private"
+# ----------------------------------------------------------------------------------------------------------------------
+# CREATE EXAMPLE SECURITY GROUPS
+# ----------------------------------------------------------------------------------------------------------------------
+
+resource "aws_security_group" "lb_sg" {
+  name        = "imputation-example-lb-sg"
+  description = "Security group for the front end Application Load Balancer"
+  vpc_id      = module.vpc.vpc_id
+
+  tags = { Name = "imputation-example-lb" }
 }
 
-resource "aws_flow_log" "flow-log" {
-  log_destination      = aws_s3_bucket.log-bucket.arn
-  log_destination_type = "s3"
-  traffic_type         = "ALL"
-  vpc_id               = module.imputation-vpc.vpc_id
+resource "aws_security_group" "emr_sg" {
+  name        = "imputation-example-emr-sg"
+  description = "Security group for the Elastic Map Reduce master node"
+  vpc_id      = module.vpc.vpc_id
+
+  revoke_rules_on_delete = true
+
+  tags = { Name = "imputation-example-emr" }
 }
 
-# module "imputation-server" {
-#   source = "./modules/imputation-server"
+resource "aws_security_group" "emr_slave_sg" {
+  name        = "imputation-example-emr-slave-sg"
+  description = "Security group for the Elastic Map Reduce master node"
+  vpc_id      = module.vpc.vpc_id
 
-#   name_prefix = var.name_prefix
-#   public_key  = var.emr_public_key
+  revoke_rules_on_delete = true
 
-#   log_uri = "s3://aws-logs-536148068215-us-east-2/elasticmapreduce/"
+  tags = { Name = "imputation-example-emr-slave" }
+}
 
-#   master_instance_type = "m5.xlarge"
-#   core_instance_type   = "m5.xlarge"
-#   task_instance_type   = "m5.xlarge"
+# ----------------------------------------------------------------------------------------------------------------------
+# CREATE EXAMPLE SECURITY GROUP RULES
+# ----------------------------------------------------------------------------------------------------------------------
 
-#   vpc_id                = module.imputation-vpc.vpc_id
-#   ec2_subnet            = module.imputation-vpc.vpc_private_subnets[0]
-#   master_security_group = module.imputation-vpc.emr_master_security_group_id
-# }
+module "imputation-security-group-rules" {
+  source = "./modules/imputation-security-group-rules"
 
-# module "imputation-elb" {
-#   source = "./modules/imputation-elb"
+  emr_security_group_id       = aws_security_group.emr_sg.id
+  emr_slave_security_group_id = aws_security_group.emr_slave_sg.id
+  lb_security_group_id        = aws_security_group.lb_sg.id
+}
 
-#   name_prefix = var.name_prefix
-#   vpc_id      = module.imputation-vpc.vpc_id
+# ----------------------------------------------------------------------------------------------------------------------
+# CREATE EXAMPLE IMPUTATION SERVER EMR CLUSTER
+# ----------------------------------------------------------------------------------------------------------------------
 
-#   lb_security_group = module.imputation-vpc.lb_security_group
-#   lb_subnets        = module.imputation-vpc.vpc_public_subnets
+locals {
+  ec2_subnet = element(module.vpc.public_subnets, 0)
+}
 
-#   master_node_id = module.imputation-server.master_node_id
-# }
+module "imputation-server" {
+  source = "./modules/imputation-server"
 
-# # module "imputation-db" {
-# #   source = "./modules/imputation-db"
+  name_prefix = "imputation-example"
 
-# #   name_prefix = var.name_prefix
+  vpc_id     = module.vpc.vpc_id
+  ec2_subnet = local.ec2_subnet
+  emr_managed_master_security_group = aws_security_group.emr_sg.id
+  emr_managed_slave_security_group  = aws_security_group.emr_slave_sg.id
 
-# #   database_subnet_ids        = module.imputation-vpc.vpc_database_subnets
-# #   database_security_group_id = module.imputation-vpc.database_security_group_id
+  public_key = var.public_key
 
-# #   db_password = var.database_password
+  bootstrap_action = [{
+    name = "imputation-example-bootstrap"
+    path = var.bootstrap_script_path
+    args = var.bootstrap_script_args
+  }]
 
-# #   # Temp value for testing
-# #   backup_retention_period = 0
-# # }
+  tags = {
+    Terraform = "true"
+    Project   = "imputation-example"
+  }
+}
 
-module "imputation-bastion" {
-  source = "./modules/imputation-bastion"
+# ----------------------------------------------------------------------------------------------------------------------
+# CREATE EXAMPLE IMPUTATION LOAD BALANCER
+# ----------------------------------------------------------------------------------------------------------------------
 
-  name_prefix = var.name_prefix
-  public_key  = var.bastion_public_key
+module "imputation-lb" {
+  source = "./modules/imputation-lb"
 
-  bastion_host_subnet_ids        = module.imputation-vpc.vpc_public_subnets
-  bastion_host_security_group_id = module.imputation-vpc.bastion_host_security_group_id
+  name_prefix = "imputation-example"
+
+  vpc_id = module.vpc.vpc_id
+
+  lb_security_group = aws_security_group.lb_sg.id
+  lb_subnets        = module.vpc.public_subnets
+
+  master_node_id = module.imputation-server.master_node_id
+
+  # HTTPS should be used in production environment
+  # For this example we do not have a valid TLS cert created so we choose false
+  enable_https = false
+
+  tags = {
+    Terraform = "true"
+    Project   = "imputation-example"
+  }
 }
