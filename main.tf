@@ -4,7 +4,7 @@
 # instance in AWS with an Application Load Balancer in front of it in a new VPC.
 #
 # !! WARNING !! This is only an example and should not be used for a production instance. Further hardening such as TLS,
-# security settings, private subnets, custom public key pairs, and managemnt infrastructure should be in place with this
+# security settings, private subnets, custom public key pairs, and management infrastructure should be in place with this
 # deployment.
 # ---------------------------------------------------------------------------------------------------------------------
 
