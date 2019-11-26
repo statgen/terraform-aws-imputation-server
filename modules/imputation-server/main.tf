@@ -51,14 +51,16 @@ resource "aws_kms_alias" "emr_kms" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_kms_grant" "ec2_kms_grant" {
-  key_id            = aws_kms_key.emr_kms.arn
-  grantee_principal = aws_iam_role.ec2.arn
+  key_id = aws_kms_key.emr_kms.arn
+  # grantee_principal = aws_iam_role.ec2.arn
+  grantee_principal = var.ec2_role_arn
   operations        = ["Encrypt", "Decrypt", "GenerateDataKey", "GenerateDataKeyWithoutPlaintext"]
 }
 
 resource "aws_kms_grant" "emr_kms_grant" {
-  key_id            = aws_kms_key.emr_kms.arn
-  grantee_principal = aws_iam_role.emr.arn
+  key_id = aws_kms_key.emr_kms.arn
+  # grantee_principal = aws_iam_role.emr.arn
+  grantee_principal = var.emr_role_arn
   operations        = ["Encrypt", "Decrypt", "GenerateDataKey", "GenerateDataKeyWithoutPlaintext", "CreateGrant", "RetireGrant"]
 }
 
@@ -90,104 +92,6 @@ EOF
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# CREATE IAM ROLES AND POLICIES TO SUPPORT EMR AUTOSCALING AND CONNECTIONS TO AWS SERVICES
-# ---------------------------------------------------------------------------------------------------------------------
-
-data "aws_iam_policy_document" "assume_role_emr" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["elasticmapreduce.amazonaws.com"]
-    }
-
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-data "aws_iam_policy_document" "assume_role_ec2" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-data "aws_iam_policy_document" "application_autoscaling" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["application-autoscaling.amazonaws.com", "elasticmapreduce.amazonaws.com"]
-    }
-
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-resource "aws_iam_role" "emr" {
-  name               = "${var.name_prefix}-emr-role"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_emr.json
-
-  tags = merge(
-    var.emr_iam_role_tags,
-    var.tags,
-  )
-}
-
-resource "aws_iam_role_policy_attachment" "emr" {
-  role       = aws_iam_role.emr.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceRole"
-}
-
-resource "aws_iam_role" "ec2" {
-  name               = "${var.name_prefix}-ec2-role"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_ec2.json
-
-  tags = merge(
-    var.ec2_iam_role_tags,
-    var.tags,
-  )
-}
-
-resource "aws_iam_role_policy_attachment" "ec2" {
-  role       = aws_iam_role.ec2.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceforEC2Role"
-}
-
-resource "aws_iam_role_policy_attachment" "cloudwatch" {
-  role       = aws_iam_role.ec2.name
-  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
-}
-
-resource "aws_iam_instance_profile" "ec2" {
-  name = aws_iam_role.ec2.name
-  role = aws_iam_role.ec2.name
-}
-
-resource "aws_iam_role" "ec2_autoscaling" {
-  name               = "${var.name_prefix}-ec2-autoscaling-role"
-  assume_role_policy = data.aws_iam_policy_document.application_autoscaling.json
-
-  tags = merge(
-    var.ec2_autoscaling_role_tags,
-    var.tags,
-  )
-}
-
-resource "aws_iam_role_policy_attachment" "ec2_autoscaling" {
-  role       = aws_iam_role.ec2_autoscaling.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceforAutoScalingRole"
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
 # CREATE AN ELASTIC MAP REDUCE (EMR) CLUSTER
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -210,7 +114,8 @@ resource "aws_emr_cluster" "cluster" {
     emr_managed_slave_security_group  = var.emr_managed_slave_security_group
     service_access_security_group     = var.service_access_security_group
 
-    instance_profile = aws_iam_instance_profile.ec2.name
+    # instance_profile = aws_iam_instance_profile.ec2.name
+    instance_profile = var.ec2_instance_profile_name
   }
 
   master_instance_group {
@@ -296,8 +201,10 @@ EOF
 }]
 EOF
 
-  service_role     = aws_iam_role.emr.name
-  autoscaling_role = aws_iam_role.ec2_autoscaling.name
+  # service_role     = aws_iam_role.emr.name
+  service_role = var.emr_role_name
+  # autoscaling_role = aws_iam_role.ec2_autoscaling.name
+  autoscaling_role = var.ec2_autoscaling_role_name
 }
 
 resource "aws_emr_instance_group" "task" {

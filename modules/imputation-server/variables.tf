@@ -3,14 +3,44 @@
 # You must provide a value for each of these parameters.
 # ---------------------------------------------------------------------------------------------------------------------
 
+variable "ec2_autoscaling_role_name" {
+  description = "The name of the role for EC2 instance autoscaling"
+  default     = null
+  type        = string
+}
+
 variable "ec2_subnet" {
   description = "The subnet to place EC2 instances in"
   default     = null
   type        = string
 }
 
+variable "ec2_role_arn" {
+  description = "The ARN of the role for the EC2 instances in the EMR cluster"
+  default     = null
+  type        = string
+}
+
+variable "ec2_instance_profile_name" {
+  description = "The name of the instance profile for the EC2 instances in the EMR cluster"
+  default     = null
+  type        = string
+}
+
 variable "emr_managed_master_security_group" {
   description = "Additional security group needed for load balancer communication"
+  default     = null
+  type        = string
+}
+
+variable "emr_role_arn" {
+  description = "The ARN of the role for the EMR cluster"
+  default     = null
+  type        = string
+}
+
+variable "emr_role_name" {
+  description = "The name of the role for the EMR cluster"
   default     = null
   type        = string
 }
