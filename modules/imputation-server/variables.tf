@@ -154,7 +154,7 @@ variable "emr_iam_role_tags" {
 
 variable "emr_release_label" {
   description = "EMR release to use when creating cluser"
-  default     = "emr-5.26.0"
+  default     = "emr-5.28.0"
   type        = string
 }
 
