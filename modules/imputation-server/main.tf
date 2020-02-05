@@ -107,6 +107,8 @@ resource "aws_emr_cluster" "cluster" {
 
   security_configuration = aws_emr_security_configuration.emr_sec_config.name
 
+  custom_ami_id = var.custom_ami_id
+
   ec2_attributes {
     key_name                          = aws_key_pair.emr_key_pair.key_name
     subnet_id                         = var.ec2_subnet

@@ -128,6 +128,12 @@ variable "core_instance_type" {
   type        = string
 }
 
+variable "custom_ami_id" {
+  description = "A custom AMI for the cluster"
+  default     = null
+  type        = string
+}
+
 variable "ec2_autoscaling_role_tags" {
   description = "Tags to be applied to the EC2 autoscaling role for the EMR cluster"
   default     = {}
