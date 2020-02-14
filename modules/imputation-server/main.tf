@@ -194,8 +194,8 @@ EOF
   [{
   "Classification": "mapred-site",
   "Properties": {
-    "mapreduce.map.memory.mb": "15000",
-    "mapreduce.map.java.opts": "-Xmx12000m",
+    "mapreduce.map.memory.mb": "32000",
+    "mapreduce.map.java.opts": "-Xmx25600m",
     "mapreduce.task.timeout": "10368000000",
     "mapreduce.map.speculative": "false",
     "mapreduce.reduce.speculative": "false"
