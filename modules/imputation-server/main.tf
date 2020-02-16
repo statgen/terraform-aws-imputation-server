@@ -149,8 +149,8 @@ resource "aws_emr_cluster" "cluster" {
 },
 "Rules": [
   {
-    "Name": "ScaleOutMemoryPercentage",
-    "Description": "Scale out if YARNMemoryAvailablePercentage is less than 15",
+    "Name": "HDFSUtilization",
+    "Description": "Scale out if HDFSUtilization is more than 70%",
     "Action": {
       "SimpleScalingPolicyConfiguration": {
         "AdjustmentType": "CHANGE_IN_CAPACITY",
@@ -160,13 +160,13 @@ resource "aws_emr_cluster" "cluster" {
     },
     "Trigger": {
       "CloudWatchAlarmDefinition": {
-        "ComparisonOperator": "LESS_THAN",
+        "ComparisonOperator": "GREATER_THAN",
         "EvaluationPeriods": 1,
-        "MetricName": "YARNMemoryAvailablePercentage",
+        "MetricName": "HDFSUtilization",
         "Namespace": "AWS/ElasticMapReduce",
         "Period": 300,
         "Statistic": "AVERAGE",
-        "Threshold": 15.0,
+        "Threshold": 75.0,
         "Unit": "PERCENT"
       }
     }
@@ -195,10 +195,13 @@ EOF
   "Classification": "mapred-site",
   "Properties": {
     "mapreduce.map.memory.mb": "32000",
+    "mapreduce.map.cpu.vcores": "8",
     "mapreduce.map.java.opts": "-Xmx25600m",
     "mapreduce.task.timeout": "10368000000",
     "mapreduce.map.speculative": "false",
-    "mapreduce.reduce.speculative": "false"
+    "mapreduce.reduce.speculative": "false",
+    "yarn.scheduler.maximum-allocation-cores": "128",
+    "yarn.scheduler.maximum-allocation-mb": "64000"
   }
 }]
 EOF
