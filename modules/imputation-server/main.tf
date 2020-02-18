@@ -222,13 +222,23 @@ EOF
     "mapreduce.map.cpu.vcores": "4",
     "mapreduce.task.timeout": "10368000000",
     "mapreduce.map.speculative": "false",
-    "mapreduce.reduce.speculative": "false",
-    "yarn.scheduler.maximum-allocation-cores": "128",
-    "yarn.scheduler.maximum-allocation-mb": "64000",
-    "yarn.scheduler.capacity.maximum-am-resource-percent": "1.0",
-    "yarn.app.mapreduce.am.resource.memory-mb": "1280",
-    "yarn.app.mapreduce.am.command-opts": "-Xmx1024m",
-    "yarn.app.mapreduce.am.resource.vcores": "1"
+    "mapreduce.reduce.speculative": "false"
+  },
+  {
+    "Classification": "capacity-scheduler",
+    "Properties": {
+      "yarn.scheduler.maximum-allocation-cores": "128",
+      "yarn.scheduler.maximum-allocation-mb": "64000",
+      "yarn.scheduler.capacity.maximum-am-resource-percent": "1.0"
+    }
+  },
+  {
+    "Classification": "yarn-site",
+    "Properties": {
+      "yarn.app.mapreduce.am.resource.memory-mb": "1280",
+      "yarn.app.mapreduce.am.command-opts": "-Xmx1024m",
+      "yarn.app.mapreduce.am.resource.vcores": "1"
+    }
   }
 }]
 EOF
@@ -254,6 +264,16 @@ resource "aws_emr_instance_group" "task" {
     type                 = "gp2"
     volumes_per_instance = 1
   }
+
+  configurations_json = <<EOF
+  [{
+  "Classification": "yarn-site",
+  "Properties": {
+    "yarn.nodemanager.node-labels.provider": "config",
+    "yarn.nodemanager.node-labels.provider.configured-node-partition": "TASK"
+  }
+  }]
+  EOF
 
   autoscaling_policy = <<EOF
 {
