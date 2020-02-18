@@ -177,7 +177,7 @@ resource "aws_emr_cluster" "cluster" {
     "Action": {
       "SimpleScalingPolicyConfiguration": {
         "AdjustmentType": "CHANGE_IN_CAPACITY",
-        "ScalingAdjustment": "-1",
+        "ScalingAdjustment": -1,
         "CoolDown": 1500
       }
     },
