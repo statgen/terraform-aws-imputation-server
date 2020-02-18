@@ -215,14 +215,15 @@ EOF
 
   configurations_json = <<EOF
   [{
-  "Classification": "mapred-site",
-  "Properties": {
-    "mapreduce.map.memory.mb": "32000",
-    "mapreduce.map.java.opts": "-Xmx25600m",
-    "mapreduce.map.cpu.vcores": "4",
-    "mapreduce.task.timeout": "10368000000",
-    "mapreduce.map.speculative": "false",
-    "mapreduce.reduce.speculative": "false"
+    "Classification": "mapred-site",
+    "Properties": {
+      "mapreduce.map.memory.mb": "32000",
+      "mapreduce.map.java.opts": "-Xmx25600m",
+      "mapreduce.map.cpu.vcores": "4",
+      "mapreduce.task.timeout": "10368000000",
+      "mapreduce.map.speculative": "false",
+      "mapreduce.reduce.speculative": "false"
+    }
   },
   {
     "Classification": "capacity-scheduler",
@@ -267,11 +268,11 @@ resource "aws_emr_instance_group" "task" {
 
   configurations_json = <<EOF
   [{
-  "Classification": "yarn-site",
-  "Properties": {
-    "yarn.nodemanager.node-labels.provider": "config",
-    "yarn.nodemanager.node-labels.provider.configured-node-partition": "TASK"
-  }
+    "Classification": "yarn-site",
+    "Properties": {
+      "yarn.nodemanager.node-labels.provider": "config",
+      "yarn.nodemanager.node-labels.provider.configured-node-partition": "TASK"
+    }
   }]
   EOF
 
