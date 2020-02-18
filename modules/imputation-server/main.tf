@@ -170,6 +170,29 @@ resource "aws_emr_cluster" "cluster" {
         "Unit": "PERCENT"
       }
     }
+  },
+  {
+    "Name": "HDFSUtilizationScaleIn",
+    "Description": "Scale in if HDFSUtilization is less than 50%",
+    "Action": {
+      "SimpleScalingPolicyConfiguration": {
+        "AdjustmentType": "CHANGE_IN_CAPACITY",
+        "ScalingAdjustment": "-1",
+        "CoolDown": 1500
+      }
+    },
+    "Trigger": {
+      "CloudWatchAlarmDefinition": {
+        "ComparisonOperator": "LESS_THAN",
+        "EvaluationPeriods": 5,
+        "MetricName": "HDFSUtilization",
+        "Namespace": "AWS/ElasticMapReduce",
+        "Period": 1500,
+        "Statistic": "AVERAGE",
+        "Threshold": 50.0,
+        "Unit": "PERCENT"
+      }
+    }
   }
 ]
 }
@@ -195,13 +218,17 @@ EOF
   "Classification": "mapred-site",
   "Properties": {
     "mapreduce.map.memory.mb": "32000",
-    "mapreduce.map.cpu.vcores": "8",
     "mapreduce.map.java.opts": "-Xmx25600m",
+    "mapreduce.map.cpu.vcores": "4",
     "mapreduce.task.timeout": "10368000000",
     "mapreduce.map.speculative": "false",
     "mapreduce.reduce.speculative": "false",
     "yarn.scheduler.maximum-allocation-cores": "128",
-    "yarn.scheduler.maximum-allocation-mb": "64000"
+    "yarn.scheduler.maximum-allocation-mb": "64000",
+    "yarn.scheduler.capacity.maximum-am-resource-percent": "1.0",
+    "yarn.app.mapreduce.am.resource.memory-mb": "1280",
+    "yarn.app.mapreduce.am.command-opts": "-Xmx1024m",
+    "yarn.app.mapreduce.am.resource.vcores": "1"
   }
 }]
 EOF
@@ -254,6 +281,29 @@ resource "aws_emr_instance_group" "task" {
         "Period": 300,
         "Statistic": "AVERAGE",
         "Threshold": 15.0,
+        "Unit": "PERCENT"
+      }
+    }
+  },
+  {
+    "Name": "ScaleInMemoryPercentage",
+    "Description": "Scale in if YARNMemoryAvailablePercentage is greater than 30",
+    "Action": {
+      "SimpleScalingPolicyConfiguration": {
+        "AdjustmentType": "CHANGE_IN_CAPACITY",
+        "ScalingAdjustment": -1,
+        "CoolDown": 600
+      }
+    },
+    "Trigger": {
+      "CloudWatchAlarmDefinition": {
+        "ComparisonOperator": "GREATER_THAN",
+        "EvaluationPeriods": 1,
+        "MetricName": "YARNMemoryAvailablePercentage",
+        "Namespace": "AWS/ElasticMapReduce",
+        "Period": 600,
+        "Statistic": "AVERAGE",
+        "Threshold": 30.0,
         "Unit": "PERCENT"
       }
     }
