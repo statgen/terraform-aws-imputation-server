@@ -240,8 +240,7 @@ EOF
       "yarn.app.mapreduce.am.command-opts": "-Xmx1024m",
       "yarn.app.mapreduce.am.resource.vcores": "1"
     }
-  }
-}]
+  }]
 EOF
 
   # service_role     = aws_iam_role.emr.name
