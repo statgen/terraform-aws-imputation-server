@@ -222,30 +222,23 @@ EOF
       "mapreduce.map.cpu.vcores": "4",
       "mapreduce.task.timeout": "10368000000",
       "mapreduce.map.speculative": "false",
-      "mapreduce.reduce.speculative": "false"
+      "mapreduce.reduce.speculative": "false",
+      "yarn.app.mapreduce.am.resource.mb": "1280",
+      "yarn.app.mapreduce.am.command-opts": "-Xmx1024m",
+      "yarn.app.mapreduce.am.resource.vcores": "1"
     }
   },
   {
     "Classification": "capacity-scheduler",
     "Properties": {
       "yarn.scheduler.maximum-allocation-cores": "128",
-      "yarn.scheduler.maximum-allocation-mb": "64000",
+      "yarn.scheduler.maximum-allocation-mb": "32000",
       "yarn.scheduler.capacity.maximum-am-resource-percent": "1.0"
-    }
-  },
-  {
-    "Classification": "yarn-site",
-    "Properties": {
-      "yarn.app.mapreduce.am.resource.memory-mb": "1280",
-      "yarn.app.mapreduce.am.command-opts": "-Xmx1024m",
-      "yarn.app.mapreduce.am.resource.vcores": "1"
     }
   }]
 EOF
 
-  # service_role     = aws_iam_role.emr.name
-  service_role = var.emr_role_name
-  # autoscaling_role = aws_iam_role.ec2_autoscaling.name
+  service_role     = var.emr_role_name
   autoscaling_role = var.ec2_autoscaling_role_name
 }
 
