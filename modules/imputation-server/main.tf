@@ -223,9 +223,9 @@ EOF
       "mapreduce.task.timeout": "10368000000",
       "mapreduce.map.speculative": "false",
       "mapreduce.reduce.speculative": "false",
-      "yarn.app.mapreduce.am.resource.mb": "1280",
-      "yarn.app.mapreduce.am.command-opts": "-Xmx1024m",
-      "yarn.app.mapreduce.am.resource.vcores": "1"
+      "yarn.app.mapreduce.am.resource.mb": "5120",
+      "yarn.app.mapreduce.am.command-opts": "-Xmx4096m",
+      "yarn.app.mapreduce.am.resource.vcores": "2"
     }
   },
   {
