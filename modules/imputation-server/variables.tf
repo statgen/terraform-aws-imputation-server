@@ -106,13 +106,13 @@ variable "bootstrap_action" {
 
 variable "core_instance_count_max" {
   description = "Max capacity for core instance ASG"
-  default     = 6
+  default     = 10
   type        = number
 }
 
 variable "core_instance_count_min" {
   description = "Min capacity for core instance ASG"
-  default     = 3
+  default     = 6
   type        = number
 }
 
@@ -124,7 +124,7 @@ variable "core_instance_ebs_size" {
 
 variable "core_instance_type" {
   description = "Core instance type for EMR"
-  default     = "r5.xlarge"
+  default     = "r5.2xlarge"
   type        = string
 }
 
@@ -172,7 +172,7 @@ variable "log_uri" {
 
 variable "master_instance_ebs_size" {
   description = "Size for EBS disk on master instance in GB"
-  default     = "2048"
+  default     = "4096"
   type        = string
 }
 
@@ -190,7 +190,7 @@ variable "tags" {
 
 variable "task_instance_count_max" {
   description = "Max capacity for task instance ASG"
-  default     = 15
+  default     = 50
   type        = number
 }
 
