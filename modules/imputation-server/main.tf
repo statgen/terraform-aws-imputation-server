@@ -230,7 +230,7 @@ EOF
     }
   },
   {
-    "Classifications": "yarn-site",
+    "Classification": "yarn-site",
     "Properties": {
       "yarn.resourcemanager.am.max-attempts": "100"
     }
