@@ -51,15 +51,13 @@ resource "aws_kms_alias" "emr_kms" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_kms_grant" "ec2_kms_grant" {
-  key_id = aws_kms_key.emr_kms.arn
-  # grantee_principal = aws_iam_role.ec2.arn
+  key_id            = aws_kms_key.emr_kms.arn
   grantee_principal = var.ec2_role_arn
   operations        = ["Encrypt", "Decrypt", "GenerateDataKey", "GenerateDataKeyWithoutPlaintext"]
 }
 
 resource "aws_kms_grant" "emr_kms_grant" {
-  key_id = aws_kms_key.emr_kms.arn
-  # grantee_principal = aws_iam_role.emr.arn
+  key_id            = aws_kms_key.emr_kms.arn
   grantee_principal = var.emr_role_arn
   operations        = ["Encrypt", "Decrypt", "GenerateDataKey", "GenerateDataKeyWithoutPlaintext", "CreateGrant", "RetireGrant"]
 }
@@ -98,7 +96,7 @@ EOF
 resource "aws_emr_cluster" "cluster" {
   name          = "${var.name_prefix}-cluster"
   release_label = var.emr_release_label
-  applications  = ["Hadoop", "Ganglia"]
+  applications  = ["Hadoop"]
 
   termination_protection            = var.termination_protection
   keep_job_flow_alive_when_no_steps = true
@@ -109,6 +107,8 @@ resource "aws_emr_cluster" "cluster" {
 
   custom_ami_id = var.custom_ami_id
 
+  ebs_root_volume_size = 100
+
   ec2_attributes {
     key_name                          = aws_key_pair.emr_key_pair.key_name
     subnet_id                         = var.ec2_subnet
@@ -116,7 +116,6 @@ resource "aws_emr_cluster" "cluster" {
     emr_managed_slave_security_group  = var.emr_managed_slave_security_group
     service_access_security_group     = var.service_access_security_group
 
-    # instance_profile = aws_iam_instance_profile.ec2.name
     instance_profile = var.ec2_instance_profile_name
   }
 
@@ -125,7 +124,8 @@ resource "aws_emr_cluster" "cluster" {
 
     ebs_config {
       size                 = var.master_instance_ebs_size
-      type                 = "gp2"
+      type                 = "io1"
+      iops                 = 5000
       volumes_per_instance = 1
     }
   }
