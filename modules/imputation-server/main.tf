@@ -14,6 +14,10 @@ data "aws_instance" "master_node" {
     name   = "tag:aws:elasticmapreduce:instance-group-role"
     values = ["MASTER"]
   }
+  filter {
+    name   = "master-public-dns"
+    values = [aws_emr_cluster.cluster.master_public_dns]
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
