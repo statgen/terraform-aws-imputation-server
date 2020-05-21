@@ -15,7 +15,7 @@ data "aws_instance" "master_node" {
     values = ["MASTER"]
   }
   filter {
-    name   = "master-public-dns"
+    name   = "private-dns-name"
     values = [aws_emr_cluster.cluster.master_public_dns]
   }
 }
