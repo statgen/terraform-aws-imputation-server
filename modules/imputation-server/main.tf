@@ -227,7 +227,7 @@ EOF
       "mapreduce.task.timeout": "10368000000",
       "mapreduce.map.speculative": "false",
       "mapreduce.reduce.speculative": "false",
-      "mapreduce.am.max-attempts": "100",
+      "mapreduce.am.max-attempts": "200",
       "yarn.app.mapreduce.am.resource.mb": "5120",
       "yarn.app.mapreduce.am.command-opts": "-Xmx4096m",
       "yarn.app.mapreduce.am.resource.vcores": "2"
@@ -236,7 +236,7 @@ EOF
   {
     "Classification": "yarn-site",
     "Properties": {
-      "yarn.resourcemanager.am.max-attempts": "100"
+      "yarn.resourcemanager.am.max-attempts": "200"
     }
   },
   {
