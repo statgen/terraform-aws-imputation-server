@@ -25,8 +25,8 @@ data "aws_instance" "master_node" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_key_pair" "emr_key_pair" {
-  key_name   = "${var.name_prefix}-emr"
-  public_key = var.public_key
+  key_name_prefix = "${var.name_prefix}-emr"
+  public_key      = var.public_key
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ resource "aws_kms_key" "emr_kms" {
 }
 
 resource "aws_kms_alias" "emr_kms" {
-  name          = "alias/${var.name_prefix}-key-alias"
+  name_prefix   = "alias/${var.name_prefix}-key-alias"
   target_key_id = aws_kms_key.emr_kms.arn
 }
 
