@@ -236,7 +236,9 @@ EOF
   {
     "Classification": "yarn-site",
     "Properties": {
-      "yarn.resourcemanager.am.max-attempts": "200"
+      "yarn.resourcemanager.am.max-attempts": "200",
+      "yarn.node-labels.enabled": "true",
+      "yarn.node-labels.am.default-node-label-expression:" "CORE"
     }
   },
   {
