@@ -136,7 +136,7 @@ resource "aws_emr_cluster" "cluster" {
 
   core_instance_group {
     instance_type  = var.core_instance_type
-    instance_count = 3
+    instance_count = 5
 
     ebs_config {
       size                 = var.core_instance_ebs_size
@@ -246,6 +246,12 @@ EOF
       "yarn.scheduler.maximum-allocation-cores": "128",
       "yarn.scheduler.maximum-allocation-mb": "32000",
       "yarn.scheduler.capacity.maximum-am-resource-percent": "1.0"
+    }
+  },
+  {
+    "Classification": "hdfs-site",
+    "Properties": {
+      "dfs.replication": "2"
     }
   }]
 EOF
