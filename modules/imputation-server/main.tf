@@ -247,12 +247,6 @@ EOF
       "yarn.scheduler.maximum-allocation-mb": "32000",
       "yarn.scheduler.capacity.maximum-am-resource-percent": "1.0"
     }
-  },
-  {
-    "Classification": "hdfs-site",
-    "Properties": {
-      "dfs.replication": "2"
-    }
   }]
 EOF
 
