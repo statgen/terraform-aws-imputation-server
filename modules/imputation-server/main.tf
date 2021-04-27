@@ -136,7 +136,7 @@ resource "aws_emr_cluster" "cluster" {
 
   core_instance_group {
     instance_type  = var.core_instance_type
-    instance_count = 5
+    instance_count = 3
 
     ebs_config {
       size                 = var.core_instance_ebs_size
