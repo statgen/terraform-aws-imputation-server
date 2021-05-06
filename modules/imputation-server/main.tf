@@ -221,8 +221,8 @@ EOF
   [{
     "Classification": "mapred-site",
     "Properties": {
-      "mapreduce.map.memory.mb": "32000",
-      "mapreduce.map.java.opts": "-Xmx25600m",
+      "mapreduce.map.memory.mb": "40000",
+      "mapreduce.map.java.opts": "-Xmx32000m",
       "mapreduce.map.cpu.vcores": "4",
       "mapreduce.task.timeout": "10368000000",
       "mapreduce.map.speculative": "false",
@@ -244,7 +244,7 @@ EOF
     "Classification": "capacity-scheduler",
     "Properties": {
       "yarn.scheduler.maximum-allocation-cores": "128",
-      "yarn.scheduler.maximum-allocation-mb": "32000",
+      "yarn.scheduler.maximum-allocation-mb": "40000",
       "yarn.scheduler.capacity.maximum-am-resource-percent": "1.0"
     }
   }]
