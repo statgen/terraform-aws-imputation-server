@@ -106,13 +106,13 @@ variable "bootstrap_action" {
 
 variable "core_instance_count_max" {
   description = "Max capacity for core instance ASG"
-  default     = 10
+  default     = 20
   type        = number
 }
 
 variable "core_instance_count_min" {
   description = "Min capacity for core instance ASG"
-  default     = 6
+  default     = 10
   type        = number
 }
 
