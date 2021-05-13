@@ -126,12 +126,12 @@ resource "aws_emr_cluster" "cluster" {
   master_instance_group {
     instance_type = var.master_instance_type
 
-    ebs_config {
+/*     ebs_config {
       size                 = var.master_instance_ebs_size
       type                 = "io1"
       iops                 = 5000
       volumes_per_instance = 1
-    }
+    } */
   }
 
   core_instance_group {
