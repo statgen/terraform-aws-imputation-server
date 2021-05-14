@@ -126,7 +126,7 @@ resource "aws_emr_cluster" "cluster" {
   master_instance_group {
     instance_type = var.master_instance_type
 
-/*     ebs_config {
+    /*     ebs_config {
       size                 = var.master_instance_ebs_size
       type                 = "io1"
       iops                 = 5000
@@ -138,7 +138,7 @@ resource "aws_emr_cluster" "cluster" {
     instance_type  = var.core_instance_type
     instance_count = 10
 
-/*     ebs_config {
+    /*     ebs_config {
       size                 = var.core_instance_ebs_size
       type                 = "gp2"
       volumes_per_instance = 1
@@ -264,7 +264,7 @@ resource "aws_emr_instance_group" "task" {
 
   // ebs_optimized = true
 
-/*   ebs_config {
+  /*   ebs_config {
     size                 = var.task_instance_ebs_size
     type                 = "gp2"
     volumes_per_instance = 1
@@ -275,7 +275,8 @@ resource "aws_emr_instance_group" "task" {
     "Classification": "yarn-site",
     "Properties": {
       "yarn.nodemanager.node-labels.provider": "config",
-      "yarn.nodemanager.node-labels.provider.configured-node-partition": "TASK"
+      "yarn.nodemanager.node-labels.provider.configured-node-partition": "TASK",
+      "yarn.nodemanager.resource.memory-mb": ${var.node_manager_resource_memory_mb}
     }
   }]
   EOF
