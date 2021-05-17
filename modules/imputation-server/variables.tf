@@ -63,12 +63,6 @@ variable "name_prefix" {
   type        = string
 }
 
-variable "node_manager_resource_memory_mb" {
-  description = "Amount of memory for task nodes to allocate toward containers. Should be less than total amount of memory"
-  default     = null
-  type        = string
-}
-
 variable "vpc_id" {
   description = "The ID of the VPC in which the cluster is deployed"
   default     = null

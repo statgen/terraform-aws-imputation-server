@@ -275,8 +275,7 @@ resource "aws_emr_instance_group" "task" {
     "Classification": "yarn-site",
     "Properties": {
       "yarn.nodemanager.node-labels.provider": "config",
-      "yarn.nodemanager.node-labels.provider.configured-node-partition": "TASK",
-      "yarn.nodemanager.resource.memory-mb": ${var.node_manager_resource_memory_mb}
+      "yarn.nodemanager.node-labels.provider.configured-node-partition": "TASK"
     }
   }]
   EOF
