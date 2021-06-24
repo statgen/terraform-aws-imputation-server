@@ -125,25 +125,11 @@ resource "aws_emr_cluster" "cluster" {
 
   master_instance_group {
     instance_type = var.master_instance_type
-
-    /*     ebs_config {
-      size                 = var.master_instance_ebs_size
-      type                 = "io1"
-      iops                 = 5000
-      volumes_per_instance = 1
-    } */
   }
 
   core_instance_group {
     instance_type  = var.core_instance_type
     instance_count = 10
-
-    /*     ebs_config {
-      size                 = var.core_instance_ebs_size
-      type                 = "gp2"
-      volumes_per_instance = 1
-    } */
-
 
     autoscaling_policy = <<EOF
 {
@@ -261,14 +247,6 @@ resource "aws_emr_instance_group" "task" {
   instance_type  = var.task_instance_type
 
   bid_price = var.bid_price
-
-  // ebs_optimized = true
-
-  /*   ebs_config {
-    size                 = var.task_instance_ebs_size
-    type                 = "gp2"
-    volumes_per_instance = 1
-  } */
 
   configurations_json = <<EOF
   [{
