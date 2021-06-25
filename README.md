@@ -41,4 +41,4 @@ This project is maintained by [Jacob Pleiness](https://github.com/jdpleiness).
 [![@jacobpleiness](https://img.shields.io/twitter/follow/jacobpleiness?label=Follow%20%40jacobpleiness%20on%20Twitter&style=social)](https://twitter.com/jacobpleiness)
 
 ## License
-This code is released under the Apache 2.0 License. Please see [LICENSE]() for more details.
+This code is released under the Apache 2.0 License. Please see [LICENSE](https://github.com/jdpleiness/terraform-aws-imputation-server/tree/master/LICENSE) for more details.
