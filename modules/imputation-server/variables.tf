@@ -159,7 +159,7 @@ variable "emr_iam_role_tags" {
 }
 
 variable "emr_release_label" {
-  description = "EMR release to use when creating cluser"
+  description = "EMR release to use when creating cluster"
   default     = "emr-5.28.0"
   type        = string
 }
