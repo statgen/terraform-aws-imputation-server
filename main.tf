@@ -8,15 +8,6 @@
 # deployment.
 # ---------------------------------------------------------------------------------------------------------------------
 
-# ----------------------------------------------------------------------------------------------------------------------
-# REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
-# This module has been updated with 0.12 syntax, which means it is no longer compatible with any versions below 0.12.
-# ----------------------------------------------------------------------------------------------------------------------
-
-terraform {
-  required_version = ">= 0.12"
-}
-
 data "aws_region" "current" {}
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -25,7 +16,7 @@ data "aws_region" "current" {}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "2.15.0"
+  version = "3.1.0"
 
   name = "imputation-example-vpc"
   cidr = "10.120.0.0/16"
@@ -35,8 +26,6 @@ module "vpc" {
 
   enable_dns_hostnames = true
   enable_dns_support   = true
-
-  enable_s3_endpoint = true
 
   tags = {
     Terraform = "true"
@@ -89,6 +78,21 @@ module "imputation-security-group-rules" {
 }
 
 # ----------------------------------------------------------------------------------------------------------------------
+# CREATE EXAMPLE IMPUTATION SERVER IAM ROLES
+# ----------------------------------------------------------------------------------------------------------------------
+
+module "imputation-iam" {
+  source = "./modules/imputation-iam"
+
+  name_prefix = "imputation-example"
+
+  tags = {
+    Terraform = "true"
+    Project   = "imputation-example"
+  }
+}
+
+# ----------------------------------------------------------------------------------------------------------------------
 # CREATE EXAMPLE IMPUTATION SERVER EMR CLUSTER
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -101,8 +105,13 @@ module "imputation-server" {
 
   name_prefix = "imputation-example"
 
-  vpc_id     = module.vpc.vpc_id
-  ec2_subnet = local.ec2_subnet
+  vpc_id                            = module.vpc.vpc_id
+  ec2_subnet                        = local.ec2_subnet
+  ec2_role_arn                      = module.imputation-iam.ec2_role_arn
+  emr_role_name                     = module.imputation-iam.emr_role_name
+  emr_role_arn                      = module.imputation-iam.emr_role_arn
+  ec2_instance_profile_name         = module.imputation-iam.ec2_instance_profile_name
+  ec2_autoscaling_role_name         = module.imputation-iam.ec2_autoscaling_role_name
   emr_managed_master_security_group = aws_security_group.emr_sg.id
   emr_managed_slave_security_group  = aws_security_group.emr_slave_sg.id
 

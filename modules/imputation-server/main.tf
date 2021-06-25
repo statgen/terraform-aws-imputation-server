@@ -125,25 +125,11 @@ resource "aws_emr_cluster" "cluster" {
 
   master_instance_group {
     instance_type = var.master_instance_type
-
-    /*     ebs_config {
-      size                 = var.master_instance_ebs_size
-      type                 = "io1"
-      iops                 = 5000
-      volumes_per_instance = 1
-    } */
   }
 
   core_instance_group {
     instance_type  = var.core_instance_type
     instance_count = 10
-
-    /*     ebs_config {
-      size                 = var.core_instance_ebs_size
-      type                 = "gp2"
-      volumes_per_instance = 1
-    } */
-
 
     autoscaling_policy = <<EOF
 {
@@ -158,7 +144,7 @@ resource "aws_emr_cluster" "cluster" {
     "Action": {
       "SimpleScalingPolicyConfiguration": {
         "AdjustmentType": "CHANGE_IN_CAPACITY",
-        "ScalingAdjustment": 1,
+        "ScalingAdjustment": 2,
         "CoolDown": 300
       }
     },
@@ -262,14 +248,6 @@ resource "aws_emr_instance_group" "task" {
 
   bid_price = var.bid_price
 
-  // ebs_optimized = true
-
-  /*   ebs_config {
-    size                 = var.task_instance_ebs_size
-    type                 = "gp2"
-    volumes_per_instance = 1
-  } */
-
   configurations_json = <<EOF
   [{
     "Classification": "yarn-site",
@@ -289,11 +267,11 @@ resource "aws_emr_instance_group" "task" {
 "Rules": [
   {
     "Name": "ScaleOutMemoryPercentage",
-    "Description": "Scale out if YARNMemoryAvailablePercentage is less than 15",
+    "Description": "Scale out if YARNMemoryAvailablePercentage is less than 20",
     "Action": {
       "SimpleScalingPolicyConfiguration": {
         "AdjustmentType": "CHANGE_IN_CAPACITY",
-        "ScalingAdjustment": 1,
+        "ScalingAdjustment": 2,
         "CoolDown": 300
       }
     },
@@ -305,30 +283,30 @@ resource "aws_emr_instance_group" "task" {
         "Namespace": "AWS/ElasticMapReduce",
         "Period": 300,
         "Statistic": "AVERAGE",
-        "Threshold": 15.0,
+        "Threshold": 20.0,
         "Unit": "PERCENT"
       }
     }
   },
   {
     "Name": "ScaleInMemoryPercentage",
-    "Description": "Scale in if YARNMemoryAvailablePercentage is greater than 30",
+    "Description": "Scale in if YARNMemoryAvailablePercentage is greater than 50",
     "Action": {
       "SimpleScalingPolicyConfiguration": {
         "AdjustmentType": "CHANGE_IN_CAPACITY",
-        "ScalingAdjustment": -1,
+        "ScalingAdjustment": -2,
         "CoolDown": 600
       }
     },
     "Trigger": {
       "CloudWatchAlarmDefinition": {
         "ComparisonOperator": "GREATER_THAN",
-        "EvaluationPeriods": 1,
+        "EvaluationPeriods": 2,
         "MetricName": "YARNMemoryAvailablePercentage",
         "Namespace": "AWS/ElasticMapReduce",
         "Period": 600,
         "Statistic": "AVERAGE",
-        "Threshold": 30.0,
+        "Threshold": 50.0,
         "Unit": "PERCENT"
       }
     }
