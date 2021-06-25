@@ -5,7 +5,7 @@ jobs:
   check-format:
     strategy:
       matrix:
-        paths: ['/', '/modules/imputation-iam', '/modules/imputation-lb', '/modules/imputation-security-group-rules', '/modules/imputation-server']
+        paths: ['/', 'modules/imputation-iam', 'modules/imputation-lb', 'modules/imputation-security-group-rules', 'modules/imputation-server']
     name: Check format
     runs-on: ubuntu-latest
     steps:
