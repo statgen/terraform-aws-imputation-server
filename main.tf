@@ -78,6 +78,21 @@ module "imputation-security-group-rules" {
 }
 
 # ----------------------------------------------------------------------------------------------------------------------
+# CREATE EXAMPLE IMPUTATION SERVER IAM ROLES
+# ----------------------------------------------------------------------------------------------------------------------
+
+module "imputation-iam" {
+  source = "./modules/imputation-iam"
+
+  name_prefix = "imputation-example"
+
+  tags = {
+    Terraform = "true"
+    Project   = "imputation-example"
+  }
+}
+
+# ----------------------------------------------------------------------------------------------------------------------
 # CREATE EXAMPLE IMPUTATION SERVER EMR CLUSTER
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -90,9 +105,13 @@ module "imputation-server" {
 
   name_prefix = "imputation-example"
 
-  vpc_id     = module.vpc.vpc_id
-  ec2_subnet = local.ec2_subnet
-  ec2_role_arn = 
+  vpc_id                            = module.vpc.vpc_id
+  ec2_subnet                        = local.ec2_subnet
+  ec2_role_arn                      = module.imputation-iam.ec2_role_arn
+  emr_role_name                     = module.imputation-iam.emr_role_name
+  emr_role_arn                      = module.imputation-iam.emr_role_arn
+  ec2_instance_profile_name         = module.imputation-iam.ec2_instance_profile_name
+  ec2_autoscaling_role_name         = module.imputation-iam.ec2_autoscaling_role_name
   emr_managed_master_security_group = aws_security_group.emr_sg.id
   emr_managed_slave_security_group  = aws_security_group.emr_slave_sg.id
 
