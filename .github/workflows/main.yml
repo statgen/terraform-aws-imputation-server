@@ -5,7 +5,7 @@ jobs:
   check-format:
     strategy:
       matrix:
-        paths: [/, /modules/imputation-iam, /modules/imputaion-lb, /modules/imputation-security-group-rules, /imputation-server]
+        paths: [process.env.GITHUB_WORKSPACE, path.join(process.env.GITHUB_WORKSPACE, 'modules', 'imputation-iam'), path.join(process.env.GITHUB_WORKSPACE, 'modules', 'imputation-lb'), path.join(process.env.GITHUB_WORKSPACE, 'modules', 'imputation-security-group-rules'), path.join(process.env.GITHUB_WORKSPACE, 'modules', 'imputation-server')]
     name: Check format
     runs-on: ubuntu-latest
     steps:
