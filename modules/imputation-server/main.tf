@@ -139,8 +139,8 @@ resource "aws_emr_cluster" "cluster" {
 },
 "Rules": [
   {
-    "Name": "HDFSUtilization",
-    "Description": "Scale out if HDFSUtilization is more than 70%",
+    "Name": "HDFSUtilizationScaleOut",
+    "Description": "Scale out if HDFSUtilization is more than 75%",
     "Action": {
       "SimpleScalingPolicyConfiguration": {
         "AdjustmentType": "CHANGE_IN_CAPACITY",
@@ -267,7 +267,7 @@ resource "aws_emr_instance_group" "task" {
 "Rules": [
   {
     "Name": "ScaleOutMemoryPercentage",
-    "Description": "Scale out if YARNMemoryAvailablePercentage is less than 20",
+    "Description": "Scale out if YARNMemoryAvailablePercentage is less than 25",
     "Action": {
       "SimpleScalingPolicyConfiguration": {
         "AdjustmentType": "CHANGE_IN_CAPACITY",
@@ -283,7 +283,7 @@ resource "aws_emr_instance_group" "task" {
         "Namespace": "AWS/ElasticMapReduce",
         "Period": 300,
         "Statistic": "AVERAGE",
-        "Threshold": 20.0,
+        "Threshold": 25.0,
         "Unit": "PERCENT"
       }
     }
@@ -295,18 +295,41 @@ resource "aws_emr_instance_group" "task" {
       "SimpleScalingPolicyConfiguration": {
         "AdjustmentType": "CHANGE_IN_CAPACITY",
         "ScalingAdjustment": -2,
-        "CoolDown": 600
+        "CoolDown": 300
       }
     },
     "Trigger": {
       "CloudWatchAlarmDefinition": {
         "ComparisonOperator": "GREATER_THAN",
-        "EvaluationPeriods": 2,
+        "EvaluationPeriods": 1,
         "MetricName": "YARNMemoryAvailablePercentage",
         "Namespace": "AWS/ElasticMapReduce",
-        "Period": 600,
+        "Period": 300,
         "Statistic": "AVERAGE",
         "Threshold": 50.0,
+        "Unit": "PERCENT"
+      }
+    }
+  },
+  {
+    "Name": "ScaleInMemoryPercentageAggressive",
+    "Description": "Scale in if YARNMemoryAvailablePercentage is greater than 75",
+    "Action": {
+      "SimpleScalingPolicyConfiguration": {
+        "AdjustmentType": "CHANGE_IN_CAPACITY",
+        "ScalingAdjustment": -3,
+        "CoolDown": 300
+      }
+    },
+    "Trigger": {
+      "CloudWatchAlarmDefinition": {
+        "ComparisonOperator": "GREATER_THAN",
+        "EvaluationPeriods": 1,
+        "MetricName": "YARNMemoryAvailablePercentage",
+        "Namespace": "AWS/ElasticMapReduce",
+        "Period": 300,
+        "Statistic": "AVERAGE",
+        "Threshold": 75.0,
         "Unit": "PERCENT"
       }
     }
