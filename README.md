@@ -1,7 +1,7 @@
 # terraform-aws-imputation-server
 
-[![Maintained by Jacob Pleiness](https://img.shields.io/badge/maintained%20by-%40jdpleiness-ff69b4)](https://github.com/jdpleiness)
-[![Github Actions](https://github.com/jdpleiness/terraform-aws-imputation-server/workflows/Terraform/badge.svg)](https://github.com/jdpleiness/terraform-aws-imputation-server/actions?workflow=Terraform)
+<!-- [![Maintained by Jacob Pleiness](https://img.shields.io/badge/maintained%20by-%40jdpleiness-ff69b4)](https://github.com/jdpleiness) -->
+<!-- [![Github Actions](https://github.com/jdpleiness/terraform-aws-imputation-server/workflows/Terraform/badge.svg)](https://github.com/jdpleiness/terraform-aws-imputation-server/actions?workflow=Terraform) -->
 ![Terraform Version](https://img.shields.io/badge/tf-%3E%3D1.0.0-blue.svg)
 
 This repo contains a set of modules in the [modules folder](https://github.com/jdpleiness/terraform-aws-imputation-server/tree/master/modules) for deploying an [Imputation Server](https://github.com/genepi/imputationserver) on AWS using [Terraform](https://www.terraform.io/).
@@ -34,11 +34,6 @@ Instead of having to figure out the details of how to run a piece of infrastruct
 
 This Module follows the principles of [Semantic Versioning](http://semver.org/). You can find each new release, along with the changelog, in the [Releases Page](https://github.com/jdpleiness/terraform-aws-imputation-server/releases).
 
-## Authors
-
-This project is maintained by [Jacob Pleiness](https://github.com/jdpleiness).
-
-[![@jacobpleiness](https://img.shields.io/twitter/follow/jacobpleiness?label=Follow%20%40jacobpleiness%20on%20Twitter&style=social)](https://twitter.com/jacobpleiness)
 
 ## License
 This code is released under the Apache 2.0 License. Please see [LICENSE](https://github.com/jdpleiness/terraform-aws-imputation-server/tree/master/LICENSE) for more details.
