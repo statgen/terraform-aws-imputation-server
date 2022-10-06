@@ -188,14 +188,28 @@ variable "tags" {
   type        = map(string)
 }
 
-variable "task_instance_count_max" {
-  description = "Max capacity for task instance ASG"
+# On demand instances are a fallback for spot, and should have fewer instances.
+variable "task_instance_ondemand_count_max" {
+  description = "Max capacity for task instance ASG (on demand)"
   default     = 50
   type        = number
 }
 
-variable "task_instance_count_min" {
-  description = "Min capacity for task instance ASG"
+variable "task_instance_ondemand_count_min" {
+  description = "Min capacity for task instance ASG (on demand)"
+  default     = 1
+  type        = number
+}
+
+# Spot instances are the preferred worker type and should usually have higher min/max values
+variable "task_instance_spot_count_max" {
+  description = "Max capacity for task instance ASG (spot)"
+  default     = 50
+  type        = number
+}
+
+variable "task_instance_spot_count_min" {
+  description = "Min capacity for task instance ASG (spot)"
   default     = 3
   type        = number
 }

@@ -241,9 +241,10 @@ EOF
 }
 
 resource "aws_emr_instance_group" "task" {
+  # EMR workers using spot instances. This is the preferred type due to cost, and has more favorable scaling options.
   name           = "${var.name_prefix}-instance-group"
   cluster_id     = aws_emr_cluster.cluster.id
-  instance_count = var.task_instance_count_min
+  instance_count = var.task_instance_spot_count_min
   instance_type  = var.task_instance_type
 
   bid_price = var.bid_price
@@ -261,8 +262,8 @@ resource "aws_emr_instance_group" "task" {
   autoscaling_policy = <<EOF
 {
 "Constraints": {
-  "MinCapacity": ${var.task_instance_count_min},
-  "MaxCapacity": ${var.task_instance_count_max}
+  "MinCapacity": ${var.task_instance_spot_count_min},
+  "MaxCapacity": ${var.task_instance_spot_count_max}
 },
 "Rules": [
   {
@@ -307,6 +308,82 @@ resource "aws_emr_instance_group" "task" {
         "Period": 300,
         "Statistic": "AVERAGE",
         "Threshold": 50.0,
+        "Unit": "PERCENT"
+      }
+    }
+  },
+  {
+    "Name": "ScaleInMemoryPercentageAggressive",
+    "Description": "Scale in if YARNMemoryAvailablePercentage is greater than 75",
+    "Action": {
+      "SimpleScalingPolicyConfiguration": {
+        "AdjustmentType": "CHANGE_IN_CAPACITY",
+        "ScalingAdjustment": -3,
+        "CoolDown": 300
+      }
+    },
+    "Trigger": {
+      "CloudWatchAlarmDefinition": {
+        "ComparisonOperator": "GREATER_THAN",
+        "EvaluationPeriods": 1,
+        "MetricName": "YARNMemoryAvailablePercentage",
+        "Namespace": "AWS/ElasticMapReduce",
+        "Period": 300,
+        "Statistic": "AVERAGE",
+        "Threshold": 75.0,
+        "Unit": "PERCENT"
+      }
+    }
+  }
+]
+}
+EOF
+}
+
+resource "aws_emr_instance_group" "task_ondemand" {
+  # EMR workers using on demand ("immediate availability") instances. This will scale slower, b/c we prefer spot.
+  #  This group exists to ensure continued operation iff spot instances are unavailable for an extended period of time.
+  name           = "${var.name_prefix}-instance-group-ondemand"
+  cluster_id     = aws_emr_cluster.cluster.id
+  instance_count = var.task_instance_ondemand_count_min
+  instance_type  = var.task_instance_type
+
+  configurations_json = <<EOF
+  [{
+    "Classification": "yarn-site",
+    "Properties": {
+      "yarn.nodemanager.node-labels.provider": "config",
+      "yarn.nodemanager.node-labels.provider.configured-node-partition": "TASK"
+    }
+  }]
+  EOF
+
+  autoscaling_policy = <<EOF
+{
+"Constraints": {
+  "MinCapacity": ${var.task_instance_ondemand_count_min},
+  "MaxCapacity": ${var.task_instance_ondemand_count_max}
+},
+"Rules": [
+  {
+    "Name": "ScaleOutMemoryPercentage",
+    "Description": "Scale out if YARNMemoryAvailablePercentage is less than 25",
+    "Action": {
+      "SimpleScalingPolicyConfiguration": {
+        "AdjustmentType": "CHANGE_IN_CAPACITY",
+        "ScalingAdjustment": 1,
+        "CoolDown": 300
+      }
+    },
+    "Trigger": {
+      "CloudWatchAlarmDefinition": {
+        "ComparisonOperator": "LESS_THAN",
+        "EvaluationPeriods": 5,
+        "MetricName": "YARNMemoryAvailablePercentage",
+        "Namespace": "AWS/ElasticMapReduce",
+        "Period": 300,
+        "Statistic": "AVERAGE",
+        "Threshold": 25.0,
         "Unit": "PERCENT"
       }
     }
