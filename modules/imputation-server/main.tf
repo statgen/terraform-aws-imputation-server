@@ -243,7 +243,7 @@ EOF
 resource "aws_emr_instance_group" "task" {
   name           = "${var.name_prefix}-instance-group"
   cluster_id     = aws_emr_cluster.cluster.id
-  instance_count = var.task_instance_count_max
+  instance_count = var.task_instance_count_min
   instance_type  = var.task_instance_type
 
   bid_price = var.bid_price
