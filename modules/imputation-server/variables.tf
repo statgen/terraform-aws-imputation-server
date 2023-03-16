@@ -75,6 +75,12 @@ variable "public_key" {
   type        = string
 }
 
+variable "alert_sns_arn" {
+  description = "The ARN of an SNS topic used to deliver notification or system health alerts"
+  default     = null
+  type        = string
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
