@@ -197,7 +197,7 @@ variable "tags" {
 # On demand instances are a fallback for spot, and should have fewer instances.
 variable "task_instance_ondemand_count_max" {
   description = "Max capacity for task instance ASG (on demand)"
-  default     = 50
+  default     = 15
   type        = number
 }
 
