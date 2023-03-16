@@ -6,7 +6,7 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
   alarm_description   = "Track whether spot instance capacity has become highly constrained. Will notify admins that on demand capacity should be allocated to restore service."
   comparison_operator = "GreaterThanOrEqualToThreshold"
   datapoints_to_alarm = 2
-  evaluation_periods  = 1
+  evaluation_periods  = 2
 
   actions_enabled = true
 
@@ -22,7 +22,7 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
     metric {
       metric_name = "TaskNodesRunning"
       namespace   = "AWS/ElasticMapReduce"
-      period      = 7200
+      period      = 3600
       stat        = "Maximum"
 
       dimensions = {
@@ -39,7 +39,7 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
     metric {
       metric_name = "YARNMemoryAvailablePercentage"
       namespace   = "AWS/ElasticMapReduce"
-      period      = 7200
+      period      = 3600
       stat        = "Average"
 
       dimensions = {
