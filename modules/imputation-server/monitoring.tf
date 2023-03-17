@@ -55,6 +55,6 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
 
     return_data = true
 
-    expression = "(m1 >= ${var.task_instance_ondemand_count_max}) AND (m2 <= 25)"
+    expression = "(m1 == ${var.task_instance_ondemand_count_max}) AND (m2 <= 25)"
   }
 }
