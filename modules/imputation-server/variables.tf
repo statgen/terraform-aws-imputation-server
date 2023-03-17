@@ -211,8 +211,8 @@ variable "task_instance_ondemand_count_min" {
 variable "task_instance_spot_count_max" {
   description = "Max capacity for task instance ASG (spot)"
 
-  default     = 50
-  type        = number
+  default = 50
+  type    = number
 }
 
 variable "task_instance_spot_count_min" {
