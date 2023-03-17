@@ -2,9 +2,13 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
   # Warn if the system is unable to scale enough, after several hours of trying. Resolved by:
   #  a) add spot capacity (if we're blitzed with lots of jobs),
   #  b) add on demand capacity (if we're backlogged because spot capacity is unavailable).
+  # NOTE: if the on demand group is enlarged outside of TF, this alarm won't be updated automatically
   alarm_name          = "${var.name_prefix}-cluster-needs-resources"
-  alarm_description   = "Track whether spot instance capacity has become highly constrained. Will notify admins that on demand capacity should be allocated to restore service."
+  alarm_description   = "Warn when cluster cannot scale to meet demand. May indicate inability to get spot instances, or generally high load requiring more workers in task group."
+
   comparison_operator = "GreaterThanOrEqualToThreshold"
+  threshold = 1
+
   datapoints_to_alarm = 2
   evaluation_periods  = 2
 
@@ -55,6 +59,6 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
 
     return_data = true
 
-    expression = "(m1 == ${var.task_instance_ondemand_count_max}) AND (m2 <= 25)"
+    expression = "(m1 >= ${var.task_instance_ondemand_count_max}) AND (m2 <= 25)"
   }
 }
