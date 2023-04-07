@@ -244,7 +244,7 @@ resource "aws_emr_instance_group" "task" {
   # EMR workers using spot instances. This is the preferred type due to cost, and has more favorable scaling options.
   name           = "${var.name_prefix}-instance-group"
   cluster_id     = aws_emr_cluster.cluster.id
-  instance_count = var.task_instance_spot_count_min
+  instance_count = max(var.task_instance_spot_count_min, var.task_instance_spot_count_current)
   instance_type  = var.task_instance_type
 
   bid_price = var.bid_price
@@ -345,7 +345,7 @@ resource "aws_emr_instance_group" "task_ondemand" {
   #  This group exists to ensure continued operation iff spot instances are unavailable for an extended period of time.
   name           = "${var.name_prefix}-instance-group-ondemand"
   cluster_id     = aws_emr_cluster.cluster.id
-  instance_count = var.task_instance_ondemand_count_min
+  instance_count = max(var.task_instance_ondemand_count_min, var.task_instance_ondemand_count_current)
   instance_type  = var.task_instance_type
 
   configurations_json = <<EOF

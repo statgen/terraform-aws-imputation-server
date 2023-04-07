@@ -93,7 +93,7 @@ variable "aws_kms_key_tags" {
 }
 
 variable "bid_price" {
-  description = "Bid price for spot instances in EMR cluster. Default is higher than on-demand price to avoid interuptions"
+  description = "Bid price for spot instances in EMR cluster. Default is higher than on-demand price to avoid interruptions"
   default     = "10.00"
   type        = string
 }
@@ -194,6 +194,14 @@ variable "tags" {
   type        = map(string)
 }
 
+# After a blue/green deploy, we usually want to kill the old dead env, but keep the new one (which has usually scaled up)
+#  Use this variable during deploys to avoid accidentally down-sizing the production cluster to minimum settings
+variable "task_instance_ondemand_count_current" {
+  description = "Current size of the worker pool (on demand)- preserve this many when terraform runs, if more than min"
+  default     = 0
+  type        = number
+}
+
 # On demand instances are a fallback for spot, and should have fewer instances.
 variable "task_instance_ondemand_count_max" {
   description = "Max capacity for task instance ASG (on demand)"
@@ -206,6 +214,13 @@ variable "task_instance_ondemand_count_min" {
   default     = 1
   type        = number
 }
+
+variable "task_instance_spot_count_current" {
+  description = "Current size of the worker pool (spot)- preserve this many when terraform runs, if more than min"
+  default     = 0
+  type        = number
+}
+
 
 # Spot instances are the preferred worker type and should usually have higher min/max values
 variable "task_instance_spot_count_max" {
