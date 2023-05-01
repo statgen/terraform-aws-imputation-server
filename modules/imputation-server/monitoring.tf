@@ -9,8 +9,8 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
   comparison_operator = "GreaterThanOrEqualToThreshold"
   threshold           = 1
 
-  datapoints_to_alarm = 2
-  evaluation_periods  = 2
+  datapoints_to_alarm = 8
+  evaluation_periods  = 8
 
   actions_enabled = true
 
