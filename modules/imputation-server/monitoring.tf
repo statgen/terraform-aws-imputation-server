@@ -19,7 +19,7 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
   ok_actions    = [var.alert_sns_arn]
 
   metric_query {
-    id = "m1"
+    id = "nodes"
 
     return_data = false
 
@@ -36,7 +36,7 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
   }
 
   metric_query {
-    id = "m2"
+    id = "memfree"
 
     return_data = false
 
@@ -59,6 +59,6 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
 
     return_data = true
 
-    expression = "(m1 >= ${var.task_instance_ondemand_count_max}) AND (m2 <= 25)"
+    expression = "(nodes >= ${var.task_instance_ondemand_count_max}) AND (memfree <= 25)"
   }
 }
