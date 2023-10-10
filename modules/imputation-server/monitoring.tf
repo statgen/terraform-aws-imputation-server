@@ -9,8 +9,9 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
   comparison_operator = "GreaterThanOrEqualToThreshold"
   threshold           = 1
 
-  datapoints_to_alarm = 8
-  evaluation_periods  = 8
+  # Our workloads are bursty, and will often clear a small backlog (1-2 days). Notify when we are maxed for longer.
+  datapoints_to_alarm = 36
+  evaluation_periods  = 36
 
   actions_enabled = true
 
