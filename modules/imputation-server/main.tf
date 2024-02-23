@@ -203,6 +203,7 @@ EOF
     }
   }
 
+  // JL suggests 40000 MB is a worst case value and many jobs can make do with 10-20000 MB
   configurations_json = <<EOF
   [{
     "Classification": "mapred-site",

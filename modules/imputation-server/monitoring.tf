@@ -9,8 +9,9 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
   comparison_operator = "GreaterThanOrEqualToThreshold"
   threshold           = 1
 
-  datapoints_to_alarm = 8
-  evaluation_periods  = 8
+  # Our workloads are bursty, and will often clear a small backlog (1-2 days). Notify when we are maxed for longer.
+  datapoints_to_alarm = 24
+  evaluation_periods  = 24
 
   actions_enabled = true
 
@@ -19,7 +20,7 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
   ok_actions    = [var.alert_sns_arn]
 
   metric_query {
-    id = "m1"
+    id = "nodes"
 
     return_data = false
 
@@ -36,7 +37,7 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
   }
 
   metric_query {
-    id = "m2"
+    id = "memfree"
 
     return_data = false
 
@@ -59,6 +60,6 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
 
     return_data = true
 
-    expression = "(m1 >= ${var.task_instance_ondemand_count_max}) AND (m2 <= 25)"
+    expression = "(nodes >= ${var.task_instance_ondemand_count_max}) AND (memfree <= 25)"
   }
 }
