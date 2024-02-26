@@ -57,13 +57,13 @@ resource "aws_kms_alias" "emr_kms" {
 resource "aws_kms_grant" "ec2_kms_grant" {
   key_id            = aws_kms_key.emr_kms.arn
   grantee_principal = var.ec2_role_arn
-  operations        = ["Encrypt", "Decrypt", "ReEncryptFrom", "ReEncryptTo", "GenerateDataKey", "GenerateDataKeyWithoutPlaintext"]
+  operations        = ["Encrypt", "Decrypt", "ReEncryptFrom", "ReEncryptTo", "DescribeKey", "GenerateDataKey", "GenerateDataKeyWithoutPlaintext"]
 }
 
 resource "aws_kms_grant" "emr_kms_grant" {
   key_id            = aws_kms_key.emr_kms.arn
   grantee_principal = var.emr_role_arn
-  operations        = ["Encrypt", "Decrypt", "ReEncryptFrom", "ReEncryptTo", "GenerateDataKey", "GenerateDataKeyWithoutPlaintext", "CreateGrant", "RetireGrant"]
+  operations        = ["Encrypt", "Decrypt", "ReEncryptFrom", "ReEncryptTo", "DescribeKey", "GenerateDataKey", "GenerateDataKeyWithoutPlaintext", "CreateGrant", "RetireGrant"]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
