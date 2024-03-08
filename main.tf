@@ -16,7 +16,7 @@ data "aws_region" "current" {}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.1.0"
+  version = "5.0.0"
 
   name = "imputation-example-vpc"
   cidr = "10.120.0.0/16"
