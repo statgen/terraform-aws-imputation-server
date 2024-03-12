@@ -69,7 +69,7 @@ variable "port" {
 
 variable "ssl_policy" {
   description = "The name of the SSL Policy for the listener"
-  default     = "ELBSecurityPolicy-2016-08"
+  default     = "ELBSecurityPolicy-TLS13-1-2-2021-06"
   type        = string
 }
 
