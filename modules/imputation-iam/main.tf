@@ -50,7 +50,7 @@ resource "aws_iam_role" "emr" {
 
 resource "aws_iam_role_policy_attachment" "emr" {
   role       = aws_iam_role.emr.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2"
 }
 
 resource "aws_iam_role" "ec2" {
@@ -62,6 +62,7 @@ resource "aws_iam_role" "ec2" {
 
 resource "aws_iam_role_policy_attachment" "ec2" {
   role       = aws_iam_role.ec2.name
+  # NOTE: Deprecated, but with no replacement policy; we'd need to develop our own
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceforEC2Role"
 }
 
