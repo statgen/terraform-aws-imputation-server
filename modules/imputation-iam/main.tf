@@ -61,7 +61,7 @@ resource "aws_iam_role" "ec2" {
 }
 
 resource "aws_iam_role_policy_attachment" "ec2" {
-  role       = aws_iam_role.ec2.name
+  role = aws_iam_role.ec2.name
   # NOTE: Deprecated, but with no replacement policy; we'd need to develop our own
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceforEC2Role"
 }

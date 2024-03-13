@@ -154,10 +154,10 @@ variable "ec2_iam_role_tags" {
 
 variable "emr_cluster_tags" {
   description = "Tags to be applied to the EMR cluster"
-  default     = {
-    "for-use-with-amazon-emr-managed-policies": true
+  default = {
+    "for-use-with-amazon-emr-managed-policies" : true
   }
-  type        = map(string)
+  type = map(string)
 }
 
 variable "emr_iam_role_tags" {
