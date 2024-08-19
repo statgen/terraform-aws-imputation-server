@@ -224,7 +224,13 @@ variable "task_instance_spot_count_current" {
 }
 
 
-# Spot instances are the preferred worker type and should usually have higher min/max values
+# Spot instances are the ideal worker type, but if they get interrupted often, they can make things worse (instead of better)
+variable "task_instance_spot_enabled" {
+  description = "Whether to use spot instances at all. Use them when they are readily available, rarely interrupted, and jobs are short. Avoid them if big jobs will require many restarts to complete."
+  default     = false
+  type        = bool
+}
+
 variable "task_instance_spot_count_max" {
   description = "Max capacity for task instance ASG (spot)"
 

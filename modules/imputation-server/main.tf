@@ -242,7 +242,12 @@ EOF
 }
 
 resource "aws_emr_instance_group" "task" {
-  # EMR workers using spot instances. This is the preferred type due to cost, and has more favorable scaling options.
+  # EMR workers using spot instances.
+  # In theory, spot instances are great; in practice, their availability is unpredictable. Frequent interruptions can
+  #   actually cause more problems than they solve. This worker pool is defined in TF, but can be enabled/disabled depending on current availability in AWS.
+
+  count = var.task_instance_spot_enabled ? 1 : 0 # if spot instances are interrupted often, disable and prefer on-demand instead
+
   name           = "${var.name_prefix}-instance-group"
   cluster_id     = aws_emr_cluster.cluster.id
   instance_count = max(var.task_instance_spot_count_min, var.task_instance_spot_count_current)

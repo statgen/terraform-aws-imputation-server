@@ -34,18 +34,18 @@ output "emr_ec2_attributes" {
 }
 
 output "emr_instance_group_id" {
-  description = "The EMR (spot) Instance Group ID"
-  value       = aws_emr_instance_group.task.id
+  description = "The EMR (spot) Instance Group ID, if any"
+  value       = length(aws_emr_instance_group.task) > 0 ? one(aws_emr_instance_group.task).id : null
 }
 
 output "emr_instance_group_name" {
-  description = "The name of the (spot) Instance Group"
-  value       = aws_emr_instance_group.task.name
+  description = "The name of the (spot) Instance Group, if any"
+  value       = length(aws_emr_instance_group.task) > 0 ? one(aws_emr_instance_group.task).name : null
 }
 
 output "emr_instance_group_running_instance_count" {
-  description = "The number of (spot) instances currently running in this instance group"
-  value       = aws_emr_instance_group.task.running_instance_count
+  description = "The number of (spot) instances currently running in this instance group, if any"
+  value       = length(aws_emr_instance_group.task) > 0 ? one(aws_emr_instance_group.task).running_instance_count : 0
 }
 
 output "emr_instance_group_ondemand_id" {

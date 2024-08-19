@@ -1,3 +1,8 @@
+/// This alarm is a useful idea in theory, but it's noisy, and doesn't operate on the timescales we need
+//     It also can't account for the dual-queue design of cloudgene (the "active" vs "queued" feature): if 15 jobs
+//      are exporting, then even though there are 100 jobs in queue, hadoop won't be sent work, and will signal "all clear"
+//     No amount of alarm cleverness can compensate for a webapp that hides information from the system, which makes it hard to fix alarm just from the AWS side.
+// We'll keep the alarm defined and tracking metrics, in case it aids future capacity planning. But it won't send alerts.
 resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
   # Warn if the system is unable to scale enough, after several hours of trying. Resolved by:
   #  a) add spot capacity (if we're blitzed with lots of jobs),
@@ -13,7 +18,7 @@ resource "aws_cloudwatch_metric_alarm" "cluster_needs_resources" {
   datapoints_to_alarm = 24
   evaluation_periods  = 24
 
-  actions_enabled = true
+  actions_enabled = false # Don't send alerts- see notes.
 
   # Notify when the alarm changes state- for good or bad
   alarm_actions = [var.alert_sns_arn]
